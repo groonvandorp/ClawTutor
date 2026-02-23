@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Why I built ClawTutor — ClawTutor Blog</title>
+  <meta name="description" content="It started with a simple daily argument about screen time. Here's why I built ClawTutor and why I decided to open-source it." />
+  <link rel="icon" type="image/png" href="../icon.png" />
+  <link rel="apple-touch-icon" href="../icon.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0b0d12;
+      --surface:  #13161e;
+      --surface2: #1b1f2a;
+      --border:   #252938;
+      --accent:   #ff5b35;
+      --accent2:  #ffb03a;
+      --green:    #3ddc84;
+      --blue:     #4fa3e0;
+      --text:     #eef0f6;
+      --muted:    #7a7f94;
+      --radius:   14px;
+      --font:     'Inter', system-ui, -apple-system, sans-serif;
+      --mono:     'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 17px; line-height: 1.75; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: 720px; margin: 0 auto; padding: 0 1.5rem; }
+    .grad { background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    /* ── Nav ─────────────────────────────────────────────────────── */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,13,18,.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: .9rem 0; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    .nav-logo { display: flex; align-items: center; gap: .5rem; font-size: 1.1rem; font-weight: 800; color: var(--text); }
+    .nav-logo:hover { text-decoration: none; opacity: .85; }
+    .nav-links { display: flex; align-items: center; gap: 1.75rem; }
+    .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .nav-links a.active { color: var(--text); }
+
+    /* ── Post header ─────────────────────────────────────────────── */
+    .post-header { padding: 4rem 0 2.5rem; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .breadcrumb { font-size: .85rem; color: var(--muted); margin-bottom: 1.25rem; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--text); }
+
+    .pill {
+      display: inline-flex; align-items: center; gap: .3rem;
+      font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+      border-radius: 999px; padding: .22rem .65rem;
+    }
+    .pill--news    { background: rgba(255,176,58,.15); color: var(--accent2); }
+    .pill--meta    { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+
+    .post-meta { display: flex; align-items: center; gap: .65rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .post-date { font-size: .85rem; color: var(--muted); }
+
+    h1.post-title { font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 800; line-height: 1.15; letter-spacing: -.03em; }
+    .post-lede { font-size: 1.15rem; color: var(--muted); margin-top: 1rem; line-height: 1.7; }
+
+    .author { display: flex; align-items: center; gap: .75rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+    .author-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .author-name { font-weight: 700; font-size: .9rem; }
+    .author-role { font-size: .78rem; color: var(--muted); }
+
+    /* ── Post body ───────────────────────────────────────────────── */
+    .post-body { padding: 3rem 0 5rem; }
+
+    .post-body h2 { font-size: 1.5rem; font-weight: 700; margin: 2.5rem 0 .75rem; letter-spacing: -.02em; color: var(--text); }
+    .post-body h3 { font-size: 1.1rem; font-weight: 700; margin: 2rem 0 .5rem; color: var(--text); }
+    .post-body p  { margin-bottom: 1.25rem; color: var(--text); }
+    .post-body p:last-child { margin-bottom: 0; }
+    .post-body strong { color: var(--text); font-weight: 700; }
+    .post-body em { color: var(--muted); }
+    .post-body ul, .post-body ol { padding-left: 1.5rem; margin-bottom: 1.25rem; color: var(--text); }
+    .post-body li { margin-bottom: .4rem; }
+    .post-body a { color: var(--accent); }
+    .post-body code { font-family: var(--mono); font-size: .85em; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: .15rem .4rem; }
+    .post-body blockquote { border-left: 3px solid var(--accent); margin: 1.5rem 0; padding: .75rem 1.25rem; background: var(--surface); border-radius: 0 8px 8px 0; color: var(--muted); font-style: italic; }
+    .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+    /* ── Post nav ────────────────────────────────────────────────── */
+    .post-nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 0; border-top: 1px solid var(--border); margin-top: 1rem; flex-wrap: wrap; gap: 1rem; }
+    .post-nav a { display: inline-flex; align-items: center; gap: .4rem; font-size: .85rem; font-weight: 600; color: var(--muted); }
+    .post-nav a:hover { color: var(--text); text-decoration: none; }
+
+    /* ── Footer ──────────────────────────────────────────────────── */
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 2.5rem 0; text-align: center; }
+    footer p { color: var(--muted); font-size: .85rem; margin-top: .4rem; }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-bottom: 1.5rem; }
+    .footer-links a { font-size: .85rem; }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ──────────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <img src="../icon.png" alt="" style="height:32px;width:32px;border-radius:7px;" />
+      <span>ClawTutor</span>
+    </a>
+    <div class="nav-links">
+      <a href="../index.html#how-it-works">How it works</a>
+      <a href="../index.html#features">Features</a>
+      <a href="../olivers-setup.html">Real setup</a>
+      <a href="../ecosystem.html">Built on</a>
+      <a href="../blog.html" class="active">Blog</a>
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Post header ────────────────────────────────────────────────── -->
+<div class="post-header">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="../index.html">ClawTutor</a>
+      <span>/</span>
+      <a href="../blog.html">Blog</a>
+      <span>/</span>
+      <span>Launching ClawTutor</span>
+    </div>
+
+    <div class="post-meta">
+      <span class="post-date">21 February 2026</span>
+      <span class="pill pill--news">Launch</span>
+      <span class="pill pill--meta">First post</span>
+    </div>
+
+    <h1 class="post-title">Why I built ClawTutor —<br>and why I'm <span class="grad">open-sourcing it</span></h1>
+    <p class="post-lede">It started with a simple, daily argument. My kids wanted screen time; I wanted them to study first. After one too many negotiations I decided to outsource the whole thing to an AI tutor running on a Raspberry Pi.</p>
+
+    <div class="author">
+      <div class="author-avatar">👨‍💻</div>
+      <div>
+        <div class="author-name">Oliver Gruhn-van Dorp</div>
+        <div class="author-role">Creator of ClawTutor</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Post body ──────────────────────────────────────────────────── -->
+<div class="post-body">
+  <div class="container">
+
+    <h2>The problem was embarrassingly simple</h2>
+
+    <p>Every afternoon, same scene: kids arrive home, ask for screen time, I say "do some studying first", they groan, we negotiate, someone gets frustrated. Multiply that by two kids and five school days a week and it adds up to a lot of unnecessary friction.</p>
+
+    <p>I'm a software person. I build things. So I started thinking: what if I didn't have to be in the loop at all?</p>
+
+    <blockquote>
+      "What if the negotiation just... didn't happen anymore? What if screen time was simply something you earned — automatically — by doing the work?"
+    </blockquote>
+
+    <h2>Enter OpenClaw</h2>
+
+    <p>I'd been following <a href="https://openclaw.ai" target="_blank">OpenClaw</a> — an AI agent gateway for Raspberry Pi by Peter Steinberger. It lets you wire up Claude-powered agents to messaging channels like WhatsApp or Telegram with surprisingly little friction. No custom servers, no complex infrastructure — just a Pi, a config file, and a workspace directory per agent.</p>
+
+    <p>The idea crystallised quickly: give each kid a WhatsApp contact — their personal AI tutor — that quizzes them on school topics and rewards correct answers with screen time credits. When credits run out, the TV boxes and gaming consoles go offline via Pi-hole DNS blocking. No drama. No negotiation. The system handles it.</p>
+
+    <h2>What I actually built</h2>
+
+    <p>The current setup running in my home:</p>
+
+    <ul>
+      <li>🍓 <strong>One Raspberry Pi 5</strong> — runs Pi-hole and OpenClaw side by side</li>
+      <li>💬 <strong>WhatsApp with a dedicated SIM</strong> — ClawTutor has its own phone number</li>
+      <li>🧮 <strong>Two subjects per child</strong> — Maths and English to start</li>
+      <li>📺 <strong>DNS-controlled TV boxes</strong> — blocked by default, unlocked by earned credits</li>
+      <li>📊 <strong>Weekly WhatsApp report</strong> — I get a summary every Sunday without opening any dashboard</li>
+    </ul>
+
+    <p>It's been running for a few weeks now. The daily argument is gone. The kids message their tutor themselves — because they <em>want</em> the screen time. That's the bit I'm most proud of: the motivation is intrinsic now. The system just enforces the deal.</p>
+
+    <h2>Why open source?</h2>
+
+    <p>A few reasons.</p>
+
+    <p>First, I didn't build any of the hard parts. OpenClaw, Pi-hole, Anthropic Claude, Raspberry Pi OS — I'm standing on the shoulders of a lot of remarkable open source work. It felt right to give back in kind.</p>
+
+    <p>Second, I suspect I'm not the only parent who'd want this. The setup is fairly technical — you need to be comfortable with a Linux command line, DNS config, and some JSON — but I've tried to document it well enough that anyone with the relevant background can replicate it. The <a href="https://github.com/groonvandorp/ClawTutor/blob/main/SETUP.md" target="_blank">setup guide</a> and a <a href="https://github.com/groonvandorp/ClawTutor" target="_blank">CLI wizard</a> are already there.</p>
+
+    <p>Third, I want to keep building this. Geography tutors, science, sibling challenges, Home Assistant power control — there's a lot of runway. Doing it in the open means others can contribute ideas, catch mistakes, and maybe even submit a pull request.</p>
+
+    <h2>What's next</h2>
+
+    <p>The immediate roadmap is mostly about depth, not breadth:</p>
+
+    <ul>
+      <li>More subjects — Geography is next, then Science</li>
+      <li>Home automation integration — Home Assistant + smart plugs to control power, not just DNS</li>
+      <li>Sibling leaderboard — a bit of friendly competition never hurt anyone</li>
+      <li>Exam prep mode improvements — tighter countdown logic, better weak-spot targeting</li>
+    </ul>
+
+    <p>I'll write about each of these here as they come together. If you're building something similar, or have ideas, <a href="https://github.com/groonvandorp/ClawTutor/issues" target="_blank">open an issue on GitHub</a> — I read everything.</p>
+
+    <hr />
+
+    <p><em>— Oliver, Feb 2026</em></p>
+
+    <!-- ── Post nav ─────────────────────────────────────────────── -->
+    <div class="post-nav">
+      <a href="../blog.html">← All posts</a>
+      <a href="2026-02-21-gaming-consoles.html">Gaming consoles under control →</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Footer ────────────────────────────────────────────────────── -->
+<footer>
+  <div class="container" style="max-width:1100px;">
+    <div class="footer-links">
+      <a href="../index.html">Home</a>
+      <a href="../olivers-setup.html">Real setup</a>
+      <a href="../ecosystem.html">Built on</a>
+      <a href="../blog.html">Blog</a>
+      <a href="https://github.com/groonvandorp/ClawTutor/blob/main/LICENSE" target="_blank">License</a>
+    </div>
+    <div style="display:flex;justify-content:center;gap:1.25rem;margin-bottom:1rem;">
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank" title="GitHub" style="opacity:.5;transition:opacity .15s;display:flex;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">
+        <img src="https://cdn.simpleicons.org/github/7a7f94" alt="GitHub" width="22" height="22" />
+      </a>
+      <a href="https://instagram.com/clawtutor" target="_blank" title="Instagram @clawtutor" style="opacity:.5;transition:opacity .15s;display:flex;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">
+        <img src="https://cdn.simpleicons.org/instagram/7a7f94" alt="Instagram" width="22" height="22" />
+      </a>
+      <a href="https://www.youtube.com/@ClawTutor" target="_blank" title="YouTube @ClawTutor" style="opacity:.5;transition:opacity .15s;display:flex;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">
+        <img src="https://cdn.simpleicons.org/youtube/7a7f94" alt="YouTube" width="22" height="22" />
+      </a>
+    </div>
+    <p><img src="../icon.png" alt="" style="height:22px;width:22px;vertical-align:middle;border-radius:5px;margin-right:.4rem;" />ClawTutor — made with ❤️ by <a href="https://github.com/groonvandorp" target="_blank">Oliver Gruhn-van Dorp</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,185 @@
+{
+  // Example OpenClaw configuration for ClawTutor
+  // Copy to ~/.openclaw/config/openclaw.json and customize
+  //
+  // CHANNEL CHOICE: ClawTutor works with any channel OpenClaw supports.
+  // Configure the channels you want under "channels", then reference them in "bindings".
+  // You can mix channels — e.g. you on WhatsApp, kids on Telegram.
+
+  "llm": {
+    "providers": {
+      "anthropic": {
+        "apiKey": "sk-ant-your-api-key-here"
+      }
+    }
+  },
+
+  "agents": {
+    "list": [
+      {
+        "id": "main",
+        "default": true,
+        "workspace": "~/.openclaw/workspace",
+        "model": "anthropic/claude-opus-4-5-20250514"
+      },
+      {
+        "id": "tutor-kid1",
+        "name": "Matteo",
+        "workspace": "~/.openclaw/workspace-tutor-kid1",
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "identity": { "name": "Matteo" },
+        "tools": {
+          "allow": ["read", "write", "edit", "memory_search", "memory_get", "message"],
+          // Deny all potentially dangerous tools — especially channel login/admin tools
+          "deny": [
+            "exec", "browser", "canvas", "nodes", "gateway",
+            "sessions_spawn", "sessions_send", "sessions_list", "sessions_history",
+            "web_search", "web_fetch", "tts",
+            // Channel-specific login/admin tools — deny whichever you use
+            "whatsapp_login", "telegram_login", "signal_login", "discord_login"
+          ]
+        }
+      },
+      {
+        "id": "tutor-kid2",
+        "name": "Nelly",
+        "workspace": "~/.openclaw/workspace-tutor-kid2",
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "identity": { "name": "Nelly" },
+        "tools": {
+          "allow": ["read", "write", "edit", "memory_search", "memory_get", "message"],
+          "deny": [
+            "exec", "browser", "canvas", "nodes", "gateway",
+            "sessions_spawn", "sessions_send", "sessions_list", "sessions_history",
+            "web_search", "web_fetch", "tts",
+            "whatsapp_login", "telegram_login", "signal_login", "discord_login"
+          ]
+        }
+      }
+    ]
+  },
+
+  "channels": {
+
+    // ─── WhatsApp ──────────────────────────────────────────────────────────────
+    // Best for: Families already on WhatsApp. Requires a dedicated phone number
+    //           for the tutor (prepaid SIM or eSIM, ~€5/month).
+    // Login:    openclaw channels login --account assistant
+    //           (scan QR code with the tutor number's WhatsApp)
+    "whatsapp": {
+      "accounts": {
+        "default": {
+          // Your personal WhatsApp — connected to the main agent
+        },
+        "assistant": {
+          // Dedicated tutor number — kids contact this one
+          "dmPolicy": "allowlist",    // only registered numbers can message
+          "configWrites": false,       // kids can't change gateway config
+          "allowFrom": [
+            "+49YOURPHONENUMBER",
+            "+49KID1PHONENUMBER",
+            "+49KID2PHONENUMBER"
+          ]
+        }
+      }
+    },
+
+    // ─── Telegram ──────────────────────────────────────────────────────────────
+    // Best for: Keeping tutoring separate from the kid's social WhatsApp life.
+    //           Free, no extra SIM needed. Supports rich markdown in messages.
+    // Login:    Create a bot via @BotFather, copy the token below.
+    //           openclaw channels login --account tutor-bot
+    // "telegram": {
+    //   "accounts": {
+    //     "default": {
+    //       // Your personal Telegram — connected to the main agent
+    //       "token": "YOUR_MAIN_BOT_TOKEN"
+    //     },
+    //     "tutor-bot": {
+    //       // Dedicated tutor bot — kids message this bot
+    //       "token": "YOUR_TUTOR_BOT_TOKEN",
+    //       "dmPolicy": "allowlist",
+    //       "configWrites": false,
+    //       "allowFrom": [
+    //         "YOUR_TELEGRAM_USER_ID",
+    //         "KID1_TELEGRAM_USER_ID",
+    //         "KID2_TELEGRAM_USER_ID"
+    //       ]
+    //     }
+    //   }
+    // },
+
+    // ─── Signal ────────────────────────────────────────────────────────────────
+    // Best for: Privacy-conscious families. Requires a dedicated phone number,
+    //           same as WhatsApp. End-to-end encrypted.
+    // Login:    openclaw channels login --account signal-tutor
+    // "signal": {
+    //   "accounts": {
+    //     "default": {
+    //       // Your personal Signal number
+    //     },
+    //     "signal-tutor": {
+    //       // Dedicated tutor number
+    //       "dmPolicy": "allowlist",
+    //       "configWrites": false,
+    //       "allowFrom": [
+    //         "+49YOURPHONENUMBER",
+    //         "+49KID1PHONENUMBER",
+    //         "+49KID2PHONENUMBER"
+    //       ]
+    //     }
+    //   }
+    // },
+
+    // ─── Discord ───────────────────────────────────────────────────────────────
+    // Best for: Older kids who are already on Discord (gaming, etc.).
+    //           Free, rich formatting, reactions. Supports server channels
+    //           in addition to DMs.
+    // Login:    Create a bot at discord.com/developers, invite to your server.
+    //           openclaw channels login --account discord-tutor
+    // "discord": {
+    //   "accounts": {
+    //     "default": {
+    //       // Your personal Discord bot — main agent
+    //       "token": "YOUR_MAIN_BOT_TOKEN"
+    //     },
+    //     "discord-tutor": {
+    //       // Dedicated tutor bot
+    //       "token": "YOUR_TUTOR_BOT_TOKEN",
+    //       "dmPolicy": "allowlist",
+    //       "configWrites": false,
+    //       "allowFrom": [
+    //         "YOUR_DISCORD_USER_ID",
+    //         "KID1_DISCORD_USER_ID",
+    //         "KID2_DISCORD_USER_ID"
+    //       ]
+    //     }
+    //   }
+    // }
+
+  },
+
+  // ─── Bindings ─────────────────────────────────────────────────────────────────
+  // Route each child's messages to their tutor agent.
+  // Change "channel" to match whichever channel you configured above.
+  // Change "accountId" to match the account name in your channels config.
+  // For Telegram/Discord: "id" is the user ID, not a phone number.
+  "bindings": [
+    {
+      "agentId": "tutor-kid1",
+      "match": {
+        "channel": "whatsapp",          // whatsapp | telegram | signal | discord
+        "accountId": "assistant",        // must match the account key in channels config
+        "peer": { "kind": "dm", "id": "+49KID1PHONENUMBER" }
+      }
+    },
+    {
+      "agentId": "tutor-kid2",
+      "match": {
+        "channel": "whatsapp",
+        "accountId": "assistant",
+        "peer": { "kind": "dm", "id": "+49KID2PHONENUMBER" }
+      }
+    }
+  ]
+}

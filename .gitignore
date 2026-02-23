@@ -1,0 +1,51 @@
+# Credentials & secrets
+credentials/
+auth-profiles.json
+*.key
+*.pem
+*.token
+
+# OpenClaw internals
+openclaw.json
+media/
+sessions/
+cron/
+devices/
+identity/
+canvas/
+*.jsonl
+
+# Personal / private
+MEMORY.md
+memory/
+config.txt.backup
+USER.md
+TOOLS.md
+NELLY.md
+PROGRESS-ENGLISH.md
+IDENTITY.md
+HEARTBEAT.md
+
+# Local data
+data/
+snapshots/
+logs/
+
+# App development (separate)
+ios/
+tutor-api/
+news/
+
+# Cursor IDE
+.cursor/
+
+# OS
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc
+
+# Docs subfolders with personal data
+docs/kids/
+docs/classes/
+docs/tutors/

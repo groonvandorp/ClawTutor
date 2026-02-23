@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gaming consoles are now under control — ClawTutor Blog</title>
+  <meta name="description" content="Nintendo Switch and PlayStation are now controlled by ClawTutor via Pi-hole DNS — and a smart plug closes the local-play loophole." />
+  <link rel="icon" type="image/png" href="../icon.png" />
+  <link rel="apple-touch-icon" href="../icon.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0b0d12;
+      --surface:  #13161e;
+      --surface2: #1b1f2a;
+      --border:   #252938;
+      --accent:   #ff5b35;
+      --accent2:  #ffb03a;
+      --green:    #3ddc84;
+      --blue:     #4fa3e0;
+      --text:     #eef0f6;
+      --muted:    #7a7f94;
+      --radius:   14px;
+      --font:     'Inter', system-ui, -apple-system, sans-serif;
+      --mono:     'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 17px; line-height: 1.75; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: 720px; margin: 0 auto; padding: 0 1.5rem; }
+    .grad { background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    /* ── Nav ─────────────────────────────────────────────────────── */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,13,18,.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: .9rem 0; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    .nav-logo { display: flex; align-items: center; gap: .5rem; font-size: 1.1rem; font-weight: 800; color: var(--text); }
+    .nav-logo:hover { text-decoration: none; opacity: .85; }
+    .nav-links { display: flex; align-items: center; gap: 1.75rem; }
+    .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .nav-links a.active { color: var(--text); }
+
+    /* ── Post header ─────────────────────────────────────────────── */
+    .post-header { padding: 4rem 0 2.5rem; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .breadcrumb { font-size: .85rem; color: var(--muted); margin-bottom: 1.25rem; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--text); }
+
+    .pill {
+      display: inline-flex; align-items: center; gap: .3rem;
+      font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+      border-radius: 999px; padding: .22rem .65rem;
+    }
+    .pill--feature { background: rgba(61,220,132,.15); color: var(--green); }
+    .pill--meta    { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+
+    .post-meta { display: flex; align-items: center; gap: .65rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .post-date { font-size: .85rem; color: var(--muted); }
+
+    h1.post-title { font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 800; line-height: 1.15; letter-spacing: -.03em; }
+    .post-lede { font-size: 1.15rem; color: var(--muted); margin-top: 1rem; line-height: 1.7; }
+
+    .author { display: flex; align-items: center; gap: .75rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+    .author-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .author-name { font-weight: 700; font-size: .9rem; }
+    .author-role { font-size: .78rem; color: var(--muted); }
+
+    /* ── Post body ───────────────────────────────────────────────── */
+    .post-body { padding: 3rem 0 5rem; }
+
+    .post-body h2 { font-size: 1.5rem; font-weight: 700; margin: 2.5rem 0 .75rem; letter-spacing: -.02em; color: var(--text); }
+    .post-body h3 { font-size: 1.1rem; font-weight: 700; margin: 2rem 0 .5rem; color: var(--text); }
+    .post-body p  { margin-bottom: 1.25rem; color: var(--text); }
+    .post-body p:last-child { margin-bottom: 0; }
+    .post-body strong { color: var(--text); font-weight: 700; }
+    .post-body em { color: var(--muted); }
+    .post-body ul, .post-body ol { padding-left: 1.5rem; margin-bottom: 1.25rem; color: var(--text); }
+    .post-body li { margin-bottom: .4rem; }
+    .post-body a { color: var(--accent); }
+    .post-body code { font-family: var(--mono); font-size: .85em; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: .15rem .4rem; }
+    .post-body blockquote { border-left: 3px solid var(--green); margin: 1.5rem 0; padding: .75rem 1.25rem; background: var(--surface); border-radius: 0 8px 8px 0; color: var(--muted); font-style: italic; }
+    .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+    /* ── Callout box ─────────────────────────────────────────────── */
+    .callout { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; margin: 1.5rem 0; font-size: .9rem; line-height: 1.6; color: var(--muted); }
+    .callout strong { color: var(--text); }
+
+    /* ── Post nav ────────────────────────────────────────────────── */
+    .post-nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 0; border-top: 1px solid var(--border); margin-top: 1rem; flex-wrap: wrap; gap: 1rem; }
+    .post-nav a { display: inline-flex; align-items: center; gap: .4rem; font-size: .85rem; font-weight: 600; color: var(--muted); }
+    .post-nav a:hover { color: var(--text); text-decoration: none; }
+
+    /* ── Footer ──────────────────────────────────────────────────── */
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 2.5rem 0; text-align: center; }
+    footer p { color: var(--muted); font-size: .85rem; margin-top: .4rem; }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-bottom: 1.5rem; }
+    .footer-links a { font-size: .85rem; }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ──────────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <img src="../icon.png" alt="" style="height:32px;width:32px;border-radius:7px;" />
+      <span>ClawTutor</span>
+    </a>
+    <div class="nav-links">
+      <a href="../index.html#how-it-works">How it works</a>
+      <a href="../index.html#features">Features</a>
+      <a href="../olivers-setup.html">Real setup</a>
+      <a href="../ecosystem.html">Built on</a>
+      <a href="../blog.html" class="active">Blog</a>
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Post header ────────────────────────────────────────────────── -->
+<div class="post-header">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="../index.html">ClawTutor</a>
+      <span>/</span>
+      <a href="../blog.html">Blog</a>
+      <span>/</span>
+      <span>Gaming consoles under control</span>
+    </div>
+
+    <div class="post-meta">
+      <span class="post-date">21 February 2026</span>
+      <span class="pill pill--feature">Feature</span>
+      <span class="pill pill--meta">Dev update</span>
+    </div>
+
+    <h1 class="post-title">Gaming consoles are now<br><span class="grad">under control</span></h1>
+    <p class="post-lede">The Nintendo Switch and PlayStation are now fully wired into ClawTutor. DNS blocking covers online play — and a smart plug closes the local-game loophole.</p>
+
+    <div class="author">
+      <div class="author-avatar">👨‍💻</div>
+      <div>
+        <div class="author-name">Oliver Gruhn-van Dorp</div>
+        <div class="author-role">Creator of ClawTutor</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Post body ──────────────────────────────────────────────────── -->
+<div class="post-body">
+  <div class="container">
+
+    <h2>The last holdout</h2>
+
+    <p>When I first set up ClawTutor, the Apple TV was the obvious target. Streaming is almost entirely online — block the DNS and the box is useless. Job done.</p>
+
+    <p>Gaming consoles are trickier. Both the Nintendo Switch and PlayStation use online services heavily — eShop, PSN, online multiplayer — but they also run a ton of content locally. Downloaded games, offline modes, local multiplayer. DNS blocking alone doesn't touch any of that.</p>
+
+    <p>So for a while, the consoles were on the network but outside ClawTutor's reach. Which, as any parent will tell you, the kids noticed immediately.</p>
+
+    <h2>Step one: DNS control</h2>
+
+    <p>Getting the consoles under Pi-hole was straightforward. Both the Switch and PlayStation let you set a custom DNS server in their network settings. Point it at the Pi, assign the device a static IP or match by MAC address, and Pi-hole can block or unblock it per child — same as any other device.</p>
+
+    <p>Once the DNS was in place, ClawTutor could do what it already does for the TV:</p>
+
+    <ul>
+      <li>🎮 eShop and the PlayStation Store go dark when credits run out</li>
+      <li>🌐 Online multiplayer stops working — no internet, no matchmaking</li>
+      <li>✅ Credits earned → DNS unblocked → everything back online</li>
+    </ul>
+
+    <p>This covers 80% of the use case. Online gaming is the main pull, and that's now gated behind earned screen time.</p>
+
+    <h2>Step two: closing the offline loophole</h2>
+
+    <p>The remaining 20% is local play. A downloaded Switch game or a offline PlayStation title doesn't need DNS at all — it runs entirely on the console. There's no network request to block.</p>
+
+    <blockquote>
+      "The console is off the internet, but the kids are still playing. DNS isn't enough here."
+    </blockquote>
+
+    <p>The fix is a smart plug. Plug the console into a controllable power socket, wire it to ClawTutor via the Home Assistant REST API (or directly via the plug's local API), and when screen time credits hit zero — the power goes off. No internet, no local play, no workarounds.</p>
+
+    <div class="callout">
+      💡 <strong>Why this matters:</strong> DNS blocking stops online content. A smart plug stops <em>everything</em>. Combined, there's no path left for the kids to keep playing once time is up — whether the game is online, offline, downloaded, or cached.
+    </div>
+
+    <h2>What's live now</h2>
+
+    <p>As of today, both consoles are fully integrated in my home setup:</p>
+
+    <ul>
+      <li>🕹️ <strong>Nintendo Switch</strong> — DNS controlled via Pi-hole, power via smart plug</li>
+      <li>🎮 <strong>PlayStation</strong> — same setup, same result</li>
+      <li>📺 <strong>Apple TV</strong> — still the primary target, unchanged</li>
+    </ul>
+
+    <p>The kids figured out pretty fast that the consoles now have the same rules as the TV. That took approximately one evening of experimentation on their part and zero intervention on mine. The system handled it.</p>
+
+    <p>You can see the full device setup on the <a href="../olivers-setup.html">Oliver's Setup</a> page.</p>
+
+    <h2>What's next</h2>
+
+    <p>Devices are mostly sorted now. The next focus is subjects — Geography is the obvious next tutor after Maths and English, and I want to add a proper exam prep mode before the school year gets serious.</p>
+
+    <p>If you're setting this up yourself and run into anything, <a href="https://github.com/groonvandorp/ClawTutor/issues" target="_blank">open an issue on GitHub</a>.</p>
+
+    <hr />
+
+    <p><em>— Oliver, Feb 2026</em></p>
+
+    <!-- ── Post nav ─────────────────────────────────────────────── -->
+    <div class="post-nav">
+      <a href="../blog.html">← All posts</a>
+      <a href="2026-02-21-launching-clawtutor.html">← Previous: Why I built ClawTutor</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Footer ────────────────────────────────────────────────────── -->
+<footer>
+  <div class="container" style="max-width:1100px;">
+    <div class="footer-links">
+      <a href="../index.html">Home</a>
+      <a href="../olivers-setup.html">Real setup</a>
+      <a href="../ecosystem.html">Built on</a>
+      <a href="../blog.html">Blog</a>
+      <a href="https://github.com/groonvandorp/ClawTutor/blob/main/LICENSE" target="_blank">License</a>
+    </div>
+    <div style="display:flex;justify-content:center;gap:1.25rem;margin-bottom:1rem;">
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank" title="GitHub" style="opacity:.5;transition:opacity .15s;display:flex;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">
+        <img src="https://cdn.simpleicons.org/github/7a7f94" alt="GitHub" width="22" height="22" />
+      </a>
+      <a href="https://instagram.com/clawtutor" target="_blank" title="Instagram @clawtutor" style="opacity:.5;transition:opacity .15s;display:flex;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">
+        <img src="https://cdn.simpleicons.org/instagram/7a7f94" alt="Instagram" width="22" height="22" />
+      </a>
+      <a href="https://www.youtube.com/@ClawTutor" target="_blank" title="YouTube @ClawTutor" style="opacity:.5;transition:opacity .15s;display:flex;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">
+        <img src="https://cdn.simpleicons.org/youtube/7a7f94" alt="YouTube" width="22" height="22" />
+      </a>
+    </div>
+    <p><img src="../icon.png" alt="" style="height:22px;width:22px;vertical-align:middle;border-radius:5px;margin-right:.4rem;" />ClawTutor — made with ❤️ by <a href="https://github.com/groonvandorp" target="_blank">Oliver Gruhn-van Dorp</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

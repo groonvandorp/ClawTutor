@@ -1,0 +1,50 @@
+ClawTutor License
+
+Copyright (c) 2026 Oliver Gruhn-van Dorp
+
+---
+
+## Free to Use (Non-Commercial)
+
+You are free to use, copy, modify, and distribute this software and its
+templates for personal, educational, family, or other non-commercial purposes,
+provided that:
+
+1. **Attribution is required.** Any use, distribution, or derivative work must
+   include a visible credit:
+
+   > "Based on ClawTutor by Oliver Gruhn-van Dorp — clawtutor.ai"
+
+   This credit must appear in your README, documentation, or any user-facing
+   "about" section — not just buried in a license file.
+
+2. **You indicate changes.** If you modify the software, state clearly that
+   changes were made and do not misrepresent the original as your own work.
+
+---
+
+## Commercial Use Requires Permission
+
+Using this software, or any substantial portion of it, as part of a commercial
+product or service — including but not limited to SaaS platforms, paid apps,
+hosted services, or paid consulting — requires explicit written permission from
+the copyright holder.
+
+To inquire about a commercial license, contact the author via
+https://clawtutor.ai
+
+---
+
+## No Warranty
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT
+HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE
+USE OF THIS SOFTWARE.
+
+---
+
+Note: This license covers the code, templates, and documentation in this
+repository. It cannot prevent independent reimplementations of the same concept
+from scratch — copyright protects expression, not ideas.

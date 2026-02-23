@@ -1,0 +1,29 @@
+{
+  "name": "clawtutor",
+  "version": "1.0.0",
+  "description": "AI tutors that earn kids screen time for correct quiz answers — built on OpenClaw",
+  "keywords": ["openclaw", "tutoring", "education", "ai", "screen-time", "kids", "parenting"],
+  "author": "Oliver Gruhn-van Dorp <oliver@clawtutor.ai>",
+  "license": "SEE LICENSE IN ../LICENSE",
+  "homepage": "https://clawtutor.ai",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/groonvandorp/ClawTutor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/groonvandorp/ClawTutor/issues"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "clawtutor": "./bin/clawtutor.js"
+  },
+  "files": [
+    "bin/",
+    "scripts/"
+  ],
+  "scripts": {
+    "start": "node bin/clawtutor.js"
+  }
+}

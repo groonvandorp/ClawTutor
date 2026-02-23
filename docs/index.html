@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClawTutor — Turn screen time into learn time</title>
+  <meta name="description" content="AI tutors that quiz your kids via WhatsApp, Telegram, or Discord and reward correct answers with screen time credits. Screen time conflict. Outsourced." />
+  <meta property="og:title" content="ClawTutor — Turn screen time into learn time" />
+  <meta property="og:description" content="Screen time conflict. Outsourced. AI tutors running on a Raspberry Pi that actually make kids want to study." />
+  <meta property="og:url" content="https://clawtutor.ai" />
+  <link rel="icon" type="image/png" href="icon.png" />
+  <link rel="apple-touch-icon" href="icon.png" />
+  <meta property="og:image" content="https://clawtutor.ai/logo.png" />
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0b0d12;
+      --surface:   #13161e;
+      --surface2:  #1b1f2a;
+      --border:    #252938;
+      --accent:    #ff5b35;
+      --accent2:   #ffb03a;
+      --green:     #3ddc84;
+      --text:      #eef0f6;
+      --muted:     #7a7f94;
+      --radius:    14px;
+      --font:      'Inter', system-ui, -apple-system, sans-serif;
+      --mono:      'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Typography ───────────────────────────────────────────── */
+    h1 { font-size: clamp(2.4rem, 6vw, 4.2rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; }
+    h2 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; letter-spacing: -0.02em; }
+    h3 { font-size: 1.1rem; font-weight: 600; }
+
+    /* ── Layout helpers ───────────────────────────────────────── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    .section    { padding: 6rem 0; }
+    .section--alt { background: var(--surface); }
+
+    /* ── Gradient text ────────────────────────────────────────── */
+    .grad {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Buttons ──────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .75rem 1.6rem; border-radius: 8px; font-weight: 600;
+      font-size: .95rem; cursor: pointer; border: none; transition: all .2s;
+      text-decoration: none;
+    }
+    .btn--primary {
+      background: var(--accent); color: #fff;
+      box-shadow: 0 0 28px rgba(255,91,53,.35);
+    }
+    .btn--primary:hover { background: #ff7050; transform: translateY(-1px); text-decoration: none; }
+    .btn--ghost {
+      background: transparent; color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+    .btn--ghost:hover { border-color: var(--muted); background: var(--surface2); text-decoration: none; }
+
+    /* ── Nav ──────────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(11,13,18,.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 0;
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { display: flex; align-items: center; gap: .5rem; font-size: 1.25rem; font-weight: 800; color: var(--text); }
+    .nav-logo:hover { text-decoration: none; opacity: .85; }
+    .nav-links { display: flex; align-items: center; gap: 1rem; }
+    .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    /* ── Hero ─────────────────────────────────────────────────── */
+    .hero {
+      padding: 5rem 0 4rem;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+      width: 900px; height: 600px;
+      background: radial-gradient(ellipse at center, rgba(255,91,53,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+    }
+    @media (max-width: 768px) { .hero-grid { grid-template-columns: 1fr; } }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(255,91,53,.12); border: 1px solid rgba(255,91,53,.3);
+      color: var(--accent); font-size: .8rem; font-weight: 600;
+      padding: .3rem .8rem; border-radius: 100px; margin-bottom: 1.5rem;
+      letter-spacing: .04em; text-transform: uppercase;
+    }
+    .hero h1 { margin-bottom: .5rem; }
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.3rem); color: var(--muted);
+      font-style: italic; margin-bottom: 1.5rem; font-weight: 400;
+    }
+    .hero-desc { color: var(--muted); font-size: 1.05rem; margin-bottom: 2rem; max-width: 480px; }
+    .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; }
+    .hero-meta { color: var(--muted); font-size: .85rem; }
+    .hero-meta span { margin-right: 1.2rem; }
+
+    /* ── Chat window ──────────────────────────────────────────── */
+    .chat-window {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,.5);
+    }
+    .chat-header {
+      background: var(--surface2);
+      padding: .85rem 1.2rem;
+      display: flex; align-items: center; gap: .75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .chat-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .chat-name { font-weight: 600; font-size: .9rem; }
+    .chat-status { font-size: .75rem; color: var(--green); }
+    .chat-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin-right: .3rem; }
+
+    .chat-body { padding: 1.2rem; display: flex; flex-direction: column; gap: .7rem; min-height: 320px; }
+
+    .msg { max-width: 78%; display: flex; flex-direction: column; gap: .15rem; }
+    .msg--them { align-self: flex-start; }
+    .msg--me   { align-self: flex-end; }
+
+    .bubble {
+      padding: .6rem 1rem; border-radius: 16px;
+      font-size: .88rem; line-height: 1.45;
+    }
+    .msg--them .bubble {
+      background: var(--surface2); color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+    .msg--me .bubble {
+      background: linear-gradient(135deg, var(--accent), #ff7a5c);
+      color: #fff; border-bottom-right-radius: 4px;
+    }
+    .msg-time { font-size: .7rem; color: var(--muted); padding: 0 .3rem; }
+    .msg--me .msg-time { text-align: right; }
+
+    .chat-input {
+      padding: .8rem 1.2rem;
+      border-top: 1px solid var(--border);
+      background: var(--surface2);
+      display: flex; align-items: center; gap: .75rem;
+    }
+    .chat-input-field {
+      flex: 1; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; padding: .5rem 1rem;
+      color: var(--muted); font-size: .85rem;
+    }
+
+    /* Typing indicator */
+    .typing { display: flex; gap: 4px; align-items: center; padding: .4rem .2rem; }
+    .typing span {
+      display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--muted);
+      animation: bounce 1.2s infinite;
+    }
+    .typing span:nth-child(2) { animation-delay: .2s; }
+    .typing span:nth-child(3) { animation-delay: .4s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); opacity: .4; }
+      40% { transform: translateY(-5px); opacity: 1; }
+    }
+
+    /* ── Stats bar ────────────────────────────────────────────── */
+    .stats {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 2.5rem 0;
+    }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; text-align: center;
+    }
+    @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+    .stat-value { font-size: 2rem; font-weight: 800; }
+    .stat-label { color: var(--muted); font-size: .85rem; margin-top: .2rem; }
+
+    /* ── How it works ─────────────────────────────────────────── */
+    .steps {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;
+      counter-reset: steps;
+    }
+    @media (max-width: 768px) { .steps { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .steps { grid-template-columns: 1fr; } }
+
+    .step {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.75rem 1.5rem;
+      position: relative; counter-increment: steps;
+    }
+    .step::before {
+      content: counter(steps);
+      position: absolute; top: -14px; left: 1.5rem;
+      background: var(--accent); color: #fff;
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .8rem; font-weight: 700;
+    }
+    .step-icon { font-size: 2rem; margin-bottom: .75rem; }
+    .step h3 { margin-bottom: .5rem; }
+    .step p { color: var(--muted); font-size: .9rem; }
+
+    /* ── Features ─────────────────────────────────────────────── */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+    }
+    @media (max-width: 900px) { .features-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 500px) { .features-grid { grid-template-columns: 1fr; } }
+
+    .feature-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem;
+      transition: border-color .2s, transform .2s;
+    }
+    .feature-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .feature-icon { font-size: 1.75rem; margin-bottom: .75rem; }
+    .feature-card h3 { margin-bottom: .4rem; }
+    .feature-card p { color: var(--muted); font-size: .88rem; }
+
+    /* ── Rewards ──────────────────────────────────────────────── */
+    .rewards-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;
+    }
+    @media (max-width: 600px) { .rewards-grid { grid-template-columns: 1fr; } }
+
+    .reward-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.25rem 1.5rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .reward-icon { font-size: 2rem; flex-shrink: 0; }
+    .reward-minutes {
+      font-size: 1.5rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .reward-desc { color: var(--muted); font-size: .85rem; }
+
+    /* ── Channels ─────────────────────────────────────────────── */
+    .channels-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+    }
+    @media (max-width: 700px) { .channels-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .channel-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem;
+      text-align: center; transition: border-color .2s;
+    }
+    .channel-card:hover { border-color: var(--border); }
+    .channel-icon { font-size: 2.5rem; margin-bottom: .75rem; display: flex; align-items: center; }
+    .channel-icon img { display: block; }
+    .channel-card h3 { font-size: 1rem; margin-bottom: .4rem; }
+    .channel-card p { color: var(--muted); font-size: .8rem; }
+    .channel-tag {
+      display: inline-block; margin-top: .6rem;
+      font-size: .7rem; font-weight: 600; padding: .2rem .6rem;
+      border-radius: 100px; border: 1px solid var(--border); color: var(--muted);
+    }
+    .channel-tag--free { border-color: rgba(61,220,132,.3); color: var(--green); }
+
+    /* ── Install ──────────────────────────────────────────────── */
+    .install-tabs {
+      display: flex; gap: .5rem; margin-bottom: 1.5rem; flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: .5rem 1.1rem; border-radius: 8px; border: 1.5px solid var(--border);
+      background: transparent; color: var(--muted); cursor: pointer;
+      font-size: .875rem; font-weight: 600; font-family: var(--font);
+      transition: all .15s;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      border-color: var(--accent); color: var(--text); background: rgba(255,91,53,.08);
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    pre {
+      background: #0d1117; border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem;
+      overflow-x: auto; font-family: var(--mono); font-size: .85rem;
+      line-height: 1.6;
+    }
+    .code-comment { color: #6e7681; }
+    .code-cmd     { color: #79c0ff; }
+    .code-str     { color: #a5d6a7; }
+    .install-note { color: var(--muted); font-size: .9rem; margin-top: 1rem; }
+
+    /* ── Cost ─────────────────────────────────────────────────── */
+    .cost-compare {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;
+    }
+    @media (max-width: 600px) { .cost-compare { grid-template-columns: 1fr; } }
+
+    .cost-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 2rem;
+    }
+    .cost-card--highlight { border-color: var(--accent); }
+    .cost-card h3 { margin-bottom: 1.25rem; color: var(--muted); font-size: .85rem; text-transform: uppercase; letter-spacing: .06em; }
+    .cost-row { display: flex; justify-content: space-between; align-items: center; padding: .6rem 0; border-bottom: 1px solid var(--border); font-size: .9rem; }
+    .cost-row:last-child { border-bottom: none; font-weight: 700; font-size: 1rem; }
+    .cost-row .price { color: var(--accent2); font-weight: 700; }
+    .cost-big { font-size: 2.5rem; font-weight: 800; margin: .5rem 0; }
+    .cost-period { color: var(--muted); font-size: .85rem; }
+
+    /* ── Disclaimer ───────────────────────────────────────────── */
+    .disclaimer {
+      background: rgba(255, 91, 53, .05);
+      border: 1px solid rgba(255, 91, 53, .2);
+      border-radius: var(--radius); padding: 1.5rem 2rem;
+      color: var(--muted); font-size: .875rem; line-height: 1.7;
+    }
+    .disclaimer strong { color: var(--text); }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 3rem 0;
+      text-align: center; color: var(--muted); font-size: .85rem;
+    }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .social-icons { display: flex; justify-content: center; gap: 1.25rem; margin-bottom: 1rem; }
+    .social-icons a { opacity: .5; transition: opacity .15s; display: flex; }
+    .social-icons a:hover { opacity: 1; }
+
+    /* ── Section headers ──────────────────────────────────────── */
+    .section-header { text-align: center; margin-bottom: 3.5rem; }
+    .section-header p { color: var(--muted); margin-top: .75rem; font-size: 1.05rem; max-width: 550px; margin-left: auto; margin-right: auto; }
+    .section-eyebrow {
+      display: inline-block; font-size: .75rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .1em;
+      color: var(--accent); margin-bottom: .75rem;
+    }
+
+    /* ── Utility ──────────────────────────────────────────────── */
+    .mt-1 { margin-top: .5rem; }
+    .mt-2 { margin-top: 1rem; }
+    .mt-3 { margin-top: 1.5rem; }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ──────────────────────────────────────────────────────── -->
+<nav>
+  <div class="container nav-inner">
+    <a href="/" class="nav-logo">
+      <img src="icon.png" alt="" style="height:32px;width:32px;border-radius:7px;" />
+      <span>ClawTutor</span>
+    </a>
+    <div class="nav-links">
+      <a href="#how-it-works">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#install">Install</a>
+      <a href="olivers-setup.html">Real setup</a>
+      <a href="ecosystem.html">Built on</a>
+      <a href="blog.html">Blog</a>
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank">GitHub</a>
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank" class="btn btn--primary" style="padding:.45rem 1rem;font-size:.85rem;">Get Started →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <div class="hero-badge">🦞 Built on OpenClaw</div>
+      <img src="logo.png" alt="ClawTutor" style="height:160px;width:auto;max-width:100%;margin-bottom:.5rem;display:block;" />
+      <h1>Turn screen time<br>into <span class="grad">learn time.</span></h1>
+      <p class="hero-sub">Screen time conflict. Outsourced.</p>
+      <p class="hero-desc">AI tutors that quiz your kids via WhatsApp, Telegram, Signal, or Discord — and reward correct answers with screen time credits. The daily negotiation loop, finally over.</p>
+      <div class="hero-cta">
+        <a href="#install" class="btn btn--primary">Get Started →</a>
+        <a href="https://github.com/groonvandorp/ClawTutor" target="_blank" class="btn btn--ghost">⭐ View on GitHub</a>
+      </div>
+      <p class="hero-meta">
+        <span>🆓 Free &amp; open source</span>
+        <span>🥧 Runs on Raspberry Pi</span>
+        <span>💶 ~€15/month</span>
+      </p>
+    </div>
+
+    <!-- Mock chat window -->
+    <div class="chat-window">
+      <div class="chat-header">
+        <div class="chat-avatar">🧮</div>
+        <div>
+          <div class="chat-name">Matteo — Math Tutor</div>
+          <div class="chat-status"><span class="chat-dot"></span>online</div>
+        </div>
+      </div>
+      <div class="chat-body">
+        <div class="msg msg--them">
+          <div class="bubble">Hey! Ready for a quick quiz? 3 questions = up to 40 minutes of screen time! 🎮</div>
+          <span class="msg-time">16:02</span>
+        </div>
+        <div class="msg msg--me">
+          <div class="bubble">ok lets go</div>
+          <span class="msg-time">16:03</span>
+        </div>
+        <div class="msg msg--them">
+          <div class="bubble">What is 25% of 80?</div>
+          <span class="msg-time">16:03</span>
+        </div>
+        <div class="msg msg--me">
+          <div class="bubble">20</div>
+          <span class="msg-time">16:03</span>
+        </div>
+        <div class="msg msg--them">
+          <div class="bubble">✅ Correct! +10 min earned.<br><br>Next: A jacket costs €60 and is discounted by 15%. What's the final price?</div>
+          <span class="msg-time">16:03</span>
+        </div>
+        <div class="msg msg--me">
+          <div class="bubble">€51</div>
+          <span class="msg-time">16:04</span>
+        </div>
+        <div class="msg msg--them">
+          <div class="bubble">🔥 Perfect! +10 min. One more and you get a bonus!</div>
+          <span class="msg-time">16:04</span>
+        </div>
+        <div class="msg msg--them">
+          <div class="typing"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+      <div class="chat-input">
+        <div class="chat-input-field">Type a message…</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Stats ─────────────────────────────────────────────────────── -->
+<div class="stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div>
+        <div class="stat-value grad">~€15</div>
+        <div class="stat-label">per month (vs €40/hr tutor)</div>
+      </div>
+      <div>
+        <div class="stat-value grad">24/7</div>
+        <div class="stat-label">available — no booking needed</div>
+      </div>
+      <div>
+        <div class="stat-value grad">5+</div>
+        <div class="stat-label">messaging channels supported</div>
+      </div>
+      <div>
+        <div class="stat-value grad">0</div>
+        <div class="stat-label">negotiations per day</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── How it works ──────────────────────────────────────────────── -->
+<section class="section" id="how-it-works">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow">How it works</span>
+      <h2>From quiz to credits in 4 steps</h2>
+      <p>Works inside the messaging apps your kids already use. No new app to install.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-icon">💬</div>
+        <h3>Kid texts the tutor</h3>
+        <p>They message Matteo (math) or Nelly (English) on WhatsApp, Telegram, or Discord — like texting a friend.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">🎯</div>
+        <h3>Tutor runs a quiz</h3>
+        <p>3 questions on current school topics. The AI knows the textbook, the chapter, and the weak spots.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">💰</div>
+        <h3>Correct = credits</h3>
+        <p>Each right answer earns screen time minutes. Perfect quiz? Bonus. 5-day streak? Weekend bonus.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">📺</div>
+        <h3>Credits = screen time</h3>
+        <p>Manual check, honour system, or fully automated via Pi-hole DNS blocking on any device.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Rewards ───────────────────────────────────────────────────── -->
+<section class="section section--alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow">The reward system</span>
+      <h2>Earn it. Spend it.</h2>
+      <p>The secret sauce that makes kids actually <em>want</em> to study.</p>
+    </div>
+    <div class="rewards-grid">
+      <div class="reward-card">
+        <div class="reward-icon">✅</div>
+        <div>
+          <div class="reward-minutes">+10 min</div>
+          <div class="reward-desc">per correct quiz answer</div>
+        </div>
+      </div>
+      <div class="reward-card">
+        <div class="reward-icon">🔥</div>
+        <div>
+          <div class="reward-minutes">+40 min</div>
+          <div class="reward-desc">for a perfect 3/3 quiz (30 + bonus)</div>
+        </div>
+      </div>
+      <div class="reward-card">
+        <div class="reward-icon">📈</div>
+        <div>
+          <div class="reward-minutes">+30 min</div>
+          <div class="reward-desc">5-day streak weekend bonus</div>
+        </div>
+      </div>
+      <div class="reward-card">
+        <div class="reward-icon">💪</div>
+        <div>
+          <div class="reward-minutes">+5 min</div>
+          <div class="reward-desc">per answer during voluntary practice</div>
+        </div>
+      </div>
+      <div class="reward-card" style="border-style:dashed;opacity:.75;">
+        <div class="reward-icon">🧹</div>
+        <div>
+          <div class="reward-minutes">+? min</div>
+          <div class="reward-desc">chore completed — parent confirms via WhatsApp <span style="font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--accent2);">coming soon</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Features ──────────────────────────────────────────────────── -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow">Features</span>
+      <h2>Everything you need. Nothing you don't.</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🎓</div>
+        <h3>Personalized AI Tutors</h3>
+        <p>Distinct personalities per subject — patient, age-appropriate, and jailbreak-resistant.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📚</div>
+        <h3>Curriculum-Aware</h3>
+        <p>Upload the textbook table of contents. The tutor knows the chapter, weak spots, and upcoming exams.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📅</div>
+        <h3>Exam Prep Mode</h3>
+        <p>Add exam dates and the tutor shifts to countdown mode — intensified practice, focused on weak areas.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👨‍👩‍👧‍👦</div>
+        <h3>Multi-Child</h3>
+        <p>Each kid gets their own isolated tutor agent and workspace. No shared context.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>Jailbreak Proof</h3>
+        <p>Kids WILL try to trick the AI. The SOUL.md prompt injection defence keeps the tutor on-task.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Device Control</h3>
+        <p>Optional Pi-hole add-on blocks TVs, PlayStations, phones, and laptops by MAC address. Auto-unlocks when credits are spent.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌍</div>
+        <h3>Multilingual</h3>
+        <p>Full German and English templates included. Add any language by translating the workspace files.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Progress Tracking</h3>
+        <p>Automatic per-topic scoring with visual status: ⬜ → 🟡 → 🟢 → ⭐</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔥</div>
+        <h3>Streak System</h3>
+        <p>Consecutive days of practice unlock weekend bonus minutes. Streaks make it addictive (in a good way).</p>
+      </div>
+      <div class="feature-card" style="border-style:dashed;opacity:.8;">
+        <div class="feature-icon">🧹</div>
+        <h3>Chore Credits <span style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--accent2);vertical-align:middle;">Soon</span></h3>
+        <p>Earn screen time by emptying the dishwasher, brushing teeth, or cleaning your room. Parent confirms via WhatsApp — credits added instantly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Channels ───────────────────────────────────────────────────── -->
+<section class="section section--alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow">Messaging channels</span>
+      <h2>Use whatever they already use</h2>
+      <p>No new app to install. The tutor lives inside your existing messaging apps.</p>
+    </div>
+    <div class="channels-grid">
+      <div class="channel-card">
+        <div class="channel-icon"><img src="https://cdn.simpleicons.org/whatsapp/25D366" alt="WhatsApp" width="40" height="40" /></div>
+        <h3>WhatsApp</h3>
+        <p>Most popular choice for families. Requires a dedicated phone number.</p>
+        <div class="channel-tag">Pay-per-use SIM</div>
+      </div>
+      <div class="channel-card">
+        <div class="channel-icon"><img src="https://cdn.simpleicons.org/telegram/26A5E4" alt="Telegram" width="40" height="40" /></div>
+        <h3>Telegram</h3>
+        <p>Free bot, no SIM needed. Supports rich markdown formatting.</p>
+        <div class="channel-tag channel-tag--free">Free</div>
+      </div>
+      <div class="channel-card">
+        <div class="channel-icon"><img src="https://cdn.simpleicons.org/signal/3A76F0" alt="Signal" width="40" height="40" /></div>
+        <h3>Signal</h3>
+        <p>Privacy-first families. End-to-end encrypted, requires dedicated number.</p>
+        <div class="channel-tag">Pay-per-use SIM</div>
+      </div>
+      <div class="channel-card">
+        <div class="channel-icon"><img src="https://cdn.simpleicons.org/discord/5865F2" alt="Discord" width="40" height="40" /></div>
+        <h3>Discord</h3>
+        <p>Great for older kids already on Discord. Free bot, rich formatting.</p>
+        <div class="channel-tag channel-tag--free">Free</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Cost ───────────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow">The economics</span>
+      <h2>Less than one hour of human tutoring. Per month.</h2>
+    </div>
+    <div class="cost-compare">
+      <div class="cost-card cost-card--highlight">
+        <h3>🦞 ClawTutor</h3>
+        <div class="cost-row"><span>Raspberry Pi 5 (one-time)</span><span class="price">~€80</span></div>
+        <div class="cost-row"><span>SIM for tutor number (pay-per-use)</span><span class="price">€1–5/mo</span></div>
+        <div class="cost-row"><span>Anthropic API (Claude Sonnet)</span><span class="price">~€5–15/mo</span></div>
+        <div class="cost-row"><span>Monthly total</span><span class="price">~€10–20/mo</span></div>
+      </div>
+      <div class="cost-card">
+        <h3>👨‍🏫 Human Tutor</h3>
+        <div class="cost-row"><span>Per hour (average)</span><span class="price">€30–50</span></div>
+        <div class="cost-row"><span>2× per week</span><span class="price">~€300/mo</span></div>
+        <div class="cost-row"><span>Availability</span><span class="price">booked</span></div>
+        <div class="cost-row"><span>Monthly total</span><span class="price" style="color:var(--muted)">~€300/mo</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Install ───────────────────────────────────────────────────── -->
+<section class="section section--alt" id="install">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow">Get started</span>
+      <h2>Three ways to install</h2>
+    </div>
+    <div class="install-tabs">
+      <button class="tab-btn active" onclick="showTab('npm')">npm (recommended)</button>
+      <button class="tab-btn" onclick="showTab('skill')">OpenClaw Skill</button>
+      <button class="tab-btn" onclick="showTab('manual')">Manual</button>
+    </div>
+
+    <div id="tab-npm" class="tab-panel active">
+      <pre><code><span class="code-comment"># 1. Install OpenClaw on your Raspberry Pi</span>
+<span class="code-cmd">npm install -g openclaw</span>
+<span class="code-cmd">openclaw onboard</span>
+
+<span class="code-comment"># 2. Install ClawTutor and run the setup wizard</span>
+<span class="code-cmd">npm install -g clawtutor</span>
+<span class="code-cmd">clawtutor setup</span></code></pre>
+      <p class="install-note">The wizard asks for your children's names, grades, and messaging channel — then creates all workspaces and config automatically. No manual file editing required.</p>
+    </div>
+
+    <div id="tab-skill" class="tab-panel">
+      <pre><code><span class="code-comment"># Already running OpenClaw? Install directly from chat:</span>
+<span class="code-str">/skill install clawtutor</span>
+
+<span class="code-comment"># Your main agent will walk you through setup conversationally.</span>
+<span class="code-comment"># No terminal needed.</span></code></pre>
+      <p class="install-note">The tutor agent asks questions and creates all workspaces, config, and the screen time database — entirely through chat with your main OpenClaw agent.</p>
+    </div>
+
+    <div id="tab-manual" class="tab-panel">
+      <pre><code><span class="code-comment"># Install OpenClaw</span>
+<span class="code-cmd">npm install -g openclaw && openclaw onboard</span>
+
+<span class="code-comment"># Clone the repo</span>
+<span class="code-cmd">git clone https://github.com/groonvandorp/ClawTutor.git</span>
+
+<span class="code-comment"># Follow the step-by-step guide</span>
+<span class="code-cmd">cat ClawTutor/SETUP.md</span></code></pre>
+      <p class="install-note">Full control. Copy the example files, edit them to your setup, and configure OpenClaw manually. See <a href="https://github.com/groonvandorp/ClawTutor/blob/main/SETUP.md">SETUP.md</a> for the complete guide.</p>
+    </div>
+
+    <div class="disclaimer mt-3">
+      <strong>⚠️ This is a self-hosted system requiring solid IT and IT-security knowledge.</strong>
+      You are connecting a messaging channel to an AI with access to your local network. You must understand and accept responsibility for the security of your setup.
+      Regular maintenance is required — keep Raspberry Pi OS, OpenClaw, Node.js, and all components patched.
+      <strong>Use at your own risk.</strong>
+      See the full disclaimer in <a href="https://github.com/groonvandorp/ClawTutor/blob/main/README.md#%EF%B8%8F-disclaimer--requirements">README.md</a>.
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ────────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-links">
+      <a href="https://github.com/groonvandorp/ClawTutor/blob/main/SETUP.md" target="_blank">Setup Guide</a>
+      <a href="https://github.com/groonvandorp/ClawTutor/blob/main/LICENSE" target="_blank">License</a>
+      <a href="https://github.com/groonvandorp/ClawTutor/issues" target="_blank">Issues</a>
+      <a href="olivers-setup.html">Real setup</a>
+      <a href="ecosystem.html">Built on</a>
+      <a href="blog.html">Blog</a>
+      <a href="https://openclaw.ai" target="_blank">OpenClaw</a>
+    </div>
+    <div class="social-icons">
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank" title="GitHub">
+        <img src="https://cdn.simpleicons.org/github/7a7f94" alt="GitHub" width="22" height="22" />
+      </a>
+      <a href="https://instagram.com/clawtutor" target="_blank" title="Instagram @clawtutor">
+        <img src="https://cdn.simpleicons.org/instagram/7a7f94" alt="Instagram" width="22" height="22" />
+      </a>
+      <a href="https://www.youtube.com/@ClawTutor" target="_blank" title="YouTube @ClawTutor">
+        <img src="https://cdn.simpleicons.org/youtube/7a7f94" alt="YouTube" width="22" height="22" />
+      </a>
+    </div>
+    <p><img src="icon.png" alt="" style="height:24px;width:24px;vertical-align:middle;border-radius:5px;margin-right:.4rem;" />ClawTutor — made with ❤️ by <a href="https://github.com/groonvandorp" target="_blank">Oliver Gruhn-van Dorp</a></p>
+    <p style="margin-top:.5rem;">Free for personal &amp; non-commercial use · <a href="https://github.com/groonvandorp/ClawTutor/blob/main/LICENSE">Commercial use requires permission</a></p>
+    <p style="margin-top:.5rem; font-size:.8rem;">Built on <a href="https://openclaw.ai" target="_blank">OpenClaw</a> by Peter Steinberger · Powered by <a href="https://anthropic.com" target="_blank">Anthropic Claude</a></p>
+  </div>
+</footer>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
