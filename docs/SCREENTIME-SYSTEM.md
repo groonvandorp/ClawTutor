@@ -33,13 +33,13 @@ Der Tutor/Agent prüft das Guthaben und schaltet ggf. frei.
 python3 scripts/screentime-db.py balance olivia
 
 # TV-Session starten (prüft Guthaben, zieht ab, schaltet TV frei)
-./scripts/tv-session.sh start olivia beamer 30
+./addons/device-control/tv-session.sh start olivia beamer 30
 
 # Session manuell beenden
-./scripts/tv-session.sh end <session_id>
+./addons/device-control/tv-session.sh end <session_id>
 
 # Abgelaufene Sessions prüfen und TVs sperren
-./scripts/tv-session.sh check
+./addons/device-control/tv-session.sh check
 ```
 
 ## Guthaben-Regeln
@@ -88,7 +88,7 @@ Es sollte regelmäßig geprüft werden, ob Sessions abgelaufen sind:
 
 ```bash
 # Alle 5 Minuten prüfen
-*/5 * * * * /home/jarvis/.openclaw/workspace/scripts/tv-session.sh check
+*/5 * * * * /home/jarvis/.openclaw/workspace/addons/device-control/tv-session.sh check
 ```
 
 Oder als OpenClaw Cron-Job mit `kind: systemEvent`.

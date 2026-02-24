@@ -39,7 +39,7 @@ Format: `TV_REQUEST: <kind> möchte <tv> für <minuten> Minuten`
 
 2. **Führe aus:**
 ```bash
-./scripts/tv-session.sh start <kind> <tv> <minuten>
+./addons/device-control/tv-session.sh start <kind> <tv> <minuten>
 ```
 
 3. **Antworte dem Tutor:**
@@ -52,7 +52,7 @@ Format: `TV_REQUEST: <kind> möchte <tv> für <minuten> Minuten`
 
 **Ausführen:**
 ```bash
-./scripts/tv-session.sh start arthur beamer 20
+./addons/device-control/tv-session.sh start arthur beamer 20
 ```
 
 **Antwort bei Erfolg:**
@@ -64,5 +64,5 @@ Format: `TV_REQUEST: <kind> möchte <tv> für <minuten> Minuten`
 ## Wichtig
 
 - Der Auto-Off Cron läuft alle 2 Minuten
-- Bei manueller Abschaltung: `./scripts/tv-session.sh end <session_id>`
+- Bei manueller Abschaltung: `./addons/device-control/tv-session.sh end <session_id>`
 - Guthaben prüfen: `python3 scripts/screentime-db.py balance <kind>`
