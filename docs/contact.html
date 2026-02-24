@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — ClawTutor</title>
+  <meta name="description" content="Get in touch with ClawTutor. Questions about setup, licensing, or collaboration — drop us a message." />
+  <link rel="icon" type="image/png" href="icon.png" />
+  <link rel="apple-touch-icon" href="icon.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0b0d12;
+      --surface:  #13161e;
+      --surface2: #1b1f2a;
+      --border:   #252938;
+      --accent:   #ff5b35;
+      --accent2:  #ffb03a;
+      --green:    #3ddc84;
+      --blue:     #4fa3e0;
+      --purple:   #9b72f4;
+      --text:     #eef0f6;
+      --muted:    #7a7f94;
+      --radius:   14px;
+      --font:     'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    .grad { background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    /* ── Nav ─────────────────────────────────────────────────────── */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,13,18,.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: .9rem 0; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    .nav-logo { display: flex; align-items: center; gap: .5rem; font-size: 1.1rem; font-weight: 800; color: var(--text); }
+    .nav-logo:hover { text-decoration: none; opacity: .85; }
+    .nav-links { display: flex; align-items: center; gap: 1.75rem; }
+    .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .nav-links a.active { color: var(--text); }
+
+    /* ── Page hero ───────────────────────────────────────────────── */
+    .page-hero { padding: 5rem 0 3.5rem; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .lead { font-size: 1.05rem; color: var(--muted); margin-top: .75rem; line-height: 1.7; max-width: 600px; }
+
+    /* ── Form ────────────────────────────────────────────────────── */
+    .form-section { padding: 3.5rem 0 5rem; }
+    .form-wrap { max-width: 620px; margin: 0 auto; }
+
+    .form-group { margin-bottom: 1.5rem; }
+    .form-label {
+      display: block; font-size: .85rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .06em;
+      color: var(--muted); margin-bottom: .5rem;
+    }
+    .form-input,
+    .form-textarea,
+    .form-select {
+      width: 100%; padding: .85rem 1rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text);
+      font-family: var(--font); font-size: .95rem;
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
+    }
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(255,91,53,.15);
+    }
+    .form-input::placeholder,
+    .form-textarea::placeholder { color: var(--muted); opacity: .5; }
+    .form-textarea { resize: vertical; min-height: 160px; }
+    .form-select option { background: var(--surface); color: var(--text); }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
+
+    .btn-submit {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .9rem 2rem; border: none; border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff; font-family: var(--font); font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: opacity .15s, transform .15s;
+    }
+    .btn-submit:hover { opacity: .9; transform: translateY(-1px); }
+    .btn-submit:active { transform: translateY(0); }
+
+    .form-note { margin-top: .75rem; font-size: .8rem; color: var(--muted); }
+
+    /* ── Alternatives ────────────────────────────────────────────── */
+    .alt-section { padding: 3rem 0; border-top: 1px solid var(--border); background: var(--surface); }
+    .alt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin-top: 1.5rem; max-width: 620px; margin-left: auto; margin-right: auto; }
+    .alt-card {
+      background: var(--surface2); border-radius: var(--radius); padding: 1.25rem;
+      text-align: center; transition: border-color .2s;
+      border: 1px solid var(--border);
+    }
+    .alt-card:hover { border-color: var(--accent); text-decoration: none; }
+    .alt-icon { font-size: 1.5rem; margin-bottom: .4rem; }
+    .alt-card h3 { font-size: .9rem; margin-bottom: .2rem; color: var(--text); }
+    .alt-card p { font-size: .78rem; color: var(--muted); }
+
+    /* ── Success state ───────────────────────────────────────────── */
+    .success-msg {
+      display: none; text-align: center; padding: 3rem 1.5rem;
+      background: var(--surface); border: 1px solid var(--green);
+      border-radius: var(--radius);
+    }
+    .success-msg.show { display: block; }
+    .success-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .success-msg h2 { font-size: 1.4rem; margin-bottom: .5rem; }
+    .success-msg p { color: var(--muted); }
+
+    /* ── Footer ──────────────────────────────────────────────────── */
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 2.5rem 0; text-align: center; }
+    footer p { color: var(--muted); font-size: .85rem; margin-top: .4rem; }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-bottom: 1.5rem; }
+    .footer-links a { font-size: .85rem; }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ──────────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="icon.png" alt="" style="height:32px;width:32px;border-radius:7px;" />
+      <span>ClawTutor</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#how-it-works">How it works</a>
+      <a href="courses.html">Courses</a>
+      <a href="olivers-setup.html">Real setup</a>
+      <a href="ecosystem.html">Built on</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html" class="active">Contact</a>
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────────────────── -->
+<div class="page-hero">
+  <div class="container">
+    <h1>Get in <span class="grad">touch</span></h1>
+    <p class="lead">Questions about setup, licensing, commercial use, or just want to say hi? Drop a message — Oliver usually replies within a day.</p>
+  </div>
+</div>
+
+<!-- ── Contact form ────────────────────────────────────────────── -->
+<div class="form-section">
+  <div class="container">
+    <div class="form-wrap">
+
+      <div id="success" class="success-msg">
+        <div class="success-icon">&#10003;</div>
+        <h2>Message sent!</h2>
+        <p>Thanks for reaching out. I'll get back to you as soon as I can.</p>
+      </div>
+
+      <form id="contact-form" action="https://formsubmit.co/oliver@clawtutor.ai" method="POST">
+        <!-- Formsubmit config -->
+        <input type="hidden" name="_subject" value="ClawTutor contact form" />
+        <input type="hidden" name="_captcha" value="true" />
+        <input type="hidden" name="_template" value="table" />
+        <input type="hidden" name="_next" value="https://clawtutor.ai/contact.html?sent=1" />
+        <input type="text" name="_honey" style="display:none" />
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="name">Name</label>
+            <input class="form-input" type="text" id="name" name="name" placeholder="Your name" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="email">Email</label>
+            <input class="form-input" type="email" id="email" name="email" placeholder="you@example.com" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="topic">Topic</label>
+          <select class="form-select" id="topic" name="topic">
+            <option value="general">General question</option>
+            <option value="setup">Setup help</option>
+            <option value="commercial">Commercial licensing</option>
+            <option value="collaboration">Collaboration / contribution</option>
+            <option value="bug">Bug report</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="message">Message</label>
+          <textarea class="form-textarea" id="message" name="message" placeholder="What's on your mind?" required></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">Send message &rarr;</button>
+        <p class="form-note">Your message goes to oliver@clawtutor.ai via Formsubmit. No data is stored on this website.</p>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── Other ways to reach out ─────────────────────────────────── -->
+<div class="alt-section">
+  <div class="container">
+    <h2 style="font-size:1.2rem;text-align:center;">Or reach out directly</h2>
+    <div class="alt-grid">
+      <a href="mailto:oliver@clawtutor.ai" class="alt-card">
+        <div class="alt-icon">📧</div>
+        <h3>Email</h3>
+        <p>oliver@clawtutor.ai</p>
+      </a>
+      <a href="https://github.com/groonvandorp/ClawTutor/issues" target="_blank" class="alt-card">
+        <div class="alt-icon">🐛</div>
+        <h3>GitHub Issues</h3>
+        <p>Bugs & feature requests</p>
+      </a>
+      <a href="https://instagram.com/clawtutor" target="_blank" class="alt-card">
+        <div class="alt-icon">📸</div>
+        <h3>Instagram</h3>
+        <p>@clawtutor</p>
+      </a>
+      <a href="https://www.youtube.com/@ClawTutor" target="_blank" class="alt-card">
+        <div class="alt-icon">▶️</div>
+        <h3>YouTube</h3>
+        <p>@ClawTutor</p>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ── Footer ────────────────────────────────────────────────────── -->
+<footer>
+  <div class="container" style="max-width:1100px;">
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="courses.html">Courses</a>
+      <a href="olivers-setup.html">Real setup</a>
+      <a href="ecosystem.html">Built on</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html">Contact</a>
+      <a href="https://github.com/groonvandorp/ClawTutor/blob/main/LICENSE" target="_blank">License</a>
+      <a href="https://openclaw.ai" target="_blank">OpenClaw</a>
+    </div>
+    <div style="display:flex;justify-content:center;gap:1.25rem;margin-bottom:1rem;">
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank" title="GitHub" style="opacity:.5;transition:opacity .15s;display:flex;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">
+        <img src="https://cdn.simpleicons.org/github/7a7f94" alt="GitHub" width="22" height="22" />
+      </a>
+      <a href="https://instagram.com/clawtutor" target="_blank" title="Instagram @clawtutor" style="opacity:.5;transition:opacity .15s;display:flex;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">
+        <img src="https://cdn.simpleicons.org/instagram/7a7f94" alt="Instagram" width="22" height="22" />
+      </a>
+      <a href="https://www.youtube.com/@ClawTutor" target="_blank" title="YouTube @ClawTutor" style="opacity:.5;transition:opacity .15s;display:flex;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">
+        <img src="https://cdn.simpleicons.org/youtube/7a7f94" alt="YouTube" width="22" height="22" />
+      </a>
+    </div>
+    <p><img src="icon.png" alt="" style="height:22px;width:22px;vertical-align:middle;border-radius:5px;margin-right:.4rem;" />ClawTutor — made with ❤️ by <a href="https://github.com/groonvandorp" target="_blank">Oliver Gruhn-van Dorp</a></p>
+    <p style="margin-top:.4rem;">Free for personal &amp; non-commercial use · <a href="https://github.com/groonvandorp/ClawTutor/blob/main/LICENSE">Commercial use requires permission</a></p>
+  </div>
+</footer>
+
+<script>
+if (new URLSearchParams(window.location.search).get('sent') === '1') {
+  document.getElementById('contact-form').style.display = 'none';
+  document.getElementById('success').classList.add('show');
+  history.replaceState(null, '', 'contact.html');
+}
+</script>
+
+</body>
+</html>

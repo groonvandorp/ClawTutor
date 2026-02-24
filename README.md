@@ -12,7 +12,7 @@
 
 AI tutors that quiz your kids via WhatsApp, Telegram, Signal, Discord, or any channel OpenClaw supports — and reward correct answers with screen time credits.
 
-🌐 [clawtutor.ai](https://clawtutor.ai) · 📦 [GitHub](https://github.com/groonvandorp/ClawTutor) · 🏠 [Real setup](https://clawtutor.ai/olivers-setup.html) · 📝 [Blog](https://clawtutor.ai/blog.html) · 📸 [Instagram](https://instagram.com/clawtutor) · ▶️ [YouTube](https://www.youtube.com/@ClawTutor)
+🌐 [clawtutor.ai](https://clawtutor.ai) · 📦 [GitHub](https://github.com/groonvandorp/ClawTutor) · 🏠 [Real setup](https://clawtutor.ai/olivers-setup.html) · 📝 [Blog](https://clawtutor.ai/blog.html) · 📧 [Contact](https://clawtutor.ai/contact.html) · 📸 [Instagram](https://instagram.com/clawtutor) · ▶️ [YouTube](https://www.youtube.com/@ClawTutor)
 
 > *Built by a father who was tired of the daily screen time negotiations with his two kids.*
 
@@ -297,6 +297,7 @@ ClawTutor/
 │   ├── index.html         # Main landing page
 │   ├── olivers-setup.html # Real-world setup walkthrough
 │   ├── courses.html       # Available courses (Math, English, Music)
+│   ├── contact.html       # Contact form (via Formsubmit)
 │   ├── ecosystem.html     # Projects ClawTutor is built on
 │   ├── blog.html          # Dev log & updates index
 │   ├── blog/              # Individual blog posts
@@ -331,6 +332,7 @@ ClawTutor/
 | [clawtutor.ai](https://clawtutor.ai) | Project website |
 | [Courses](https://clawtutor.ai/courses.html) | Available courses: Math, English, Music — with roadmap |
 | [Oliver's setup](https://clawtutor.ai/olivers-setup.html) | Real-world setup walkthrough (Raspberry Pi, WhatsApp, Apple TV, Nintendo Switch, PlayStation, Pi-hole) |
+| [Contact](https://clawtutor.ai/contact.html) | Get in touch — oliver@clawtutor.ai |
 | [Built on](https://clawtutor.ai/ecosystem.html) | All projects ClawTutor depends on |
 | [Blog](https://clawtutor.ai/blog.html) | Dev log & upcoming changes — latest: [Gaming consoles under control](https://clawtutor.ai/blog/2026-02-21-gaming-consoles.html) |
 | [SETUP.md](SETUP.md) | Complete installation guide |
