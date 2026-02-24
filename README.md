@@ -39,7 +39,7 @@ AI tutors that quiz your kids via WhatsApp, Telegram, Signal, Discord, or any ch
 ### Core System
 | Feature | Description |
 |---------|-------------|
-| 🎓 **AI Tutors** | Personalized tutors per subject (Math, English, and more) |
+| 🎓 **AI Tutors** | Personalized tutors per subject (Math, English, Music — and more coming) |
 | 💬 **Any Messenger** | WhatsApp, Telegram, Signal, Discord — kids text the tutor like a friend |
 | 💰 **Screen Time Credits** | Earn minutes for correct answers, tracked in a balance |
 | 📊 **Progress Tracking** | Automatic per-topic scoring (🟡→🟢→⭐) |
@@ -296,6 +296,7 @@ ClawTutor/
 ├── docs/                  # GitHub Pages website (clawtutor.ai)
 │   ├── index.html         # Main landing page
 │   ├── olivers-setup.html # Real-world setup walkthrough
+│   ├── courses.html       # Available courses (Math, English, Music)
 │   ├── ecosystem.html     # Projects ClawTutor is built on
 │   ├── blog.html          # Dev log & updates index
 │   ├── blog/              # Individual blog posts
@@ -328,6 +329,7 @@ ClawTutor/
 | Document | Description |
 |----------|-------------|
 | [clawtutor.ai](https://clawtutor.ai) | Project website |
+| [Courses](https://clawtutor.ai/courses.html) | Available courses: Math, English, Music — with roadmap |
 | [Oliver's setup](https://clawtutor.ai/olivers-setup.html) | Real-world setup walkthrough (Raspberry Pi, WhatsApp, Apple TV, Nintendo Switch, PlayStation, Pi-hole) |
 | [Built on](https://clawtutor.ai/ecosystem.html) | All projects ClawTutor depends on |
 | [Blog](https://clawtutor.ai/blog.html) | Dev log & upcoming changes — latest: [Gaming consoles under control](https://clawtutor.ai/blog/2026-02-21-gaming-consoles.html) |
