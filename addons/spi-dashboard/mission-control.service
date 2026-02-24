@@ -1,0 +1,14 @@
+[Unit]
+Description=ClawTutor Mission Control Dashboard
+After=network.target openclaw-gateway.service
+
+[Service]
+Type=simple
+User=jarvis
+WorkingDirectory=/home/jarvis/.openclaw/workspace
+ExecStart=/usr/bin/python3 addons/spi-dashboard/mission_control.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

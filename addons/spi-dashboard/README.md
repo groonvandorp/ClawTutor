@@ -82,7 +82,7 @@ pip3 install pillow
 
 ### 4. Configure the Script
 
-Edit `dashboard/mission_control.py`:
+Edit `addons/spi-dashboard/mission_control.py`:
 
 ```python
 # Your tutor workspaces
@@ -97,34 +97,17 @@ TUTOR_KID2 = Path("~/.openclaw/workspace-tutor-kid2")
 
 ```bash
 cd ~/.openclaw/workspace
-python3 dashboard/mission_control.py
+python3 addons/spi-dashboard/mission_control.py
 ```
 
 You should see the dashboard appear on the SPI screen.
 
 ### 6. Run as Service
 
-Create systemd service:
+Copy the included service file:
 
 ```bash
-sudo nano /etc/systemd/system/mission-control.service
-```
-
-```ini
-[Unit]
-Description=ClawTutor Mission Control Dashboard
-After=network.target
-
-[Service]
-Type=simple
-User=YOUR_USER
-WorkingDirectory=/home/YOUR_USER/.openclaw/workspace
-ExecStart=/usr/bin/python3 dashboard/mission_control.py
-Restart=always
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
+sudo cp addons/spi-dashboard/mission-control.service /etc/systemd/system/
 ```
 
 Enable and start:
@@ -139,7 +122,7 @@ sudo systemctl start mission-control
 
 ### Change Colors
 
-Edit the color constants at the top of `mission_control.py`:
+Edit the color constants at the top of `addons/spi-dashboard/mission_control.py`:
 
 ```python
 BG = (15, 15, 25)        # Background
