@@ -1,0 +1,20 @@
+# Credentials & secrets
+credentials/
+auth-profiles.json
+*.key
+*.pem
+*.token
+
+# OpenClaw internals
+openclaw.json
+media/
+sessions/
+cron/
+devices/
+identity/
+canvas/
+*.jsonl
+
+# OS
+.DS_Store
+Thumbs.db

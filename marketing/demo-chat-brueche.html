@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=400">
+    <title>ClawTutor Demo - Matteo & Emilia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0b141a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+        .phone {
+            width: 375px;
+            background: #0b141a;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .header {
+            background: #202c33;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-arrow {
+            color: #00a884;
+            font-size: 20px;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #00a884, #25d366);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .contact-info h3 {
+            color: #e9edef;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .contact-info span {
+            color: #8696a0;
+            font-size: 13px;
+        }
+        .chat {
+            background: #0b141a;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5 L35 15 L30 12 L25 15 Z' fill='%23182229' opacity='0.3'/%3E%3C/svg%3E");
+            padding: 16px;
+            min-height: 500px;
+        }
+        .message {
+            max-width: 280px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            position: relative;
+            line-height: 1.4;
+            font-size: 14.5px;
+        }
+        .message .time {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+            float: right;
+            margin-left: 8px;
+            margin-top: 4px;
+        }
+        .incoming {
+            background: #202c33;
+            color: #e9edef;
+            border-top-left-radius: 0;
+            margin-right: auto;
+        }
+        .outgoing {
+            background: #005c4b;
+            color: #e9edef;
+            border-top-right-radius: 0;
+            margin-left: auto;
+        }
+        .date-badge {
+            background: #182229;
+            color: #8696a0;
+            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            text-align: center;
+            width: fit-content;
+            margin: 16px auto;
+        }
+        .emoji {
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="header">
+            <span class="back-arrow">←</span>
+            <div class="avatar">🧮</div>
+            <div class="contact-info">
+                <h3>Matteo</h3>
+                <span>Mathe-Tutor</span>
+            </div>
+        </div>
+        <div class="chat">
+            <div class="date-badge">Heute</div>
+            
+            <div class="message incoming">
+                Hey Emilia! 👋 Ich bin Matteo, dein Mathe-Tutor. Was steht heute an — oder gibt's irgendwo einen Knoten im Kopf, den wir zusammen lösen? 🧮
+                <span class="time">15:42</span>
+            </div>
+            
+            <div class="message outgoing">
+                hi matteo, ich versteh das mit den brüchen nicht 😕
+                <span class="time">15:42</span>
+            </div>
+            
+            <div class="message incoming">
+                Keine Sorge, Brüche sind für viele erstmal schwer! 😊 Was genau macht dir Probleme — das Grundkonzept, das Addieren, oder das Kürzen? Stell dir vor, du teilst eine Pizza in 8 Stücke — das sind die Brüche des Alltags! 🍕
+                <span class="time">15:43</span>
+            </div>
+            
+            <div class="message outgoing">
+                wenn die zahlen größer als 10 sind wird es schwierig
+                <span class="time">15:43</span>
+            </div>
+            
+            <div class="message incoming">
+                Ah verstehe! Große Zahlen sehen wild aus, aber das Prinzip bleibt gleich. Schau mal: 12/24 sieht kompliziert aus, oder? Aber wenn du oben UND unten durch 12 teilst → 1/2! Genau eine halbe Pizza 🍕
+                <span class="time">15:44</span>
+            </div>
+            
+            <div class="message outgoing">
+                was meinst du mit kürzen?
+                <span class="time">15:44</span>
+            </div>
+            
+            <div class="message incoming">
+                Gute Frage! Kürzen bedeutet: Du machst die Zahlen kleiner, aber der Wert bleibt gleich.<br><br>
+                4/8 → beide durch 4 → 1/2 ✓<br>
+                6/12 → beide durch 6 → 1/2 ✓<br><br>
+                Jetzt du: Was passiert bei 10/20 wenn du durch 10 teilst? 🤔
+                <span class="time">15:45</span>
+            </div>
+            
+            <div class="message outgoing">
+                oooh das wäre dann auch 1/2!
+                <span class="time">15:45</span>
+            </div>
+            
+            <div class="message incoming">
+                GENAU! 🎉 Siehst du, du kannst das! Egal wie groß die Zahlen sind — such dir eine Zahl durch die beide teilbar sind, und der Bruch wird kleiner aber bleibt gleich viel wert. Noch ein Beispiel üben? 💪
+                <span class="time">15:46</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

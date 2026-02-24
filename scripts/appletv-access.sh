@@ -3,7 +3,7 @@
 # Usage: appletv-access.sh [block|allow|status] [all|tv|gaming|DEVICE]
 
 PIHOLE_API="http://localhost/api"
-PIHOLE_PASSWORD="${PIHOLE_PASSWORD:-your-pihole-password}"  # Set via environment or replace
+PIHOLE_PASSWORD="${PIHOLE_PASSWORD:-clawtutor2026}"
 BLOCKED_GROUP=1   # Blocked group
 ALLOWED_GROUP=0   # Default (erlaubt)
 
