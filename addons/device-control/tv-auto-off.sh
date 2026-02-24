@@ -4,7 +4,7 @@
 
 # Configure paths for your setup:
 DB_PATH="${SCREENTIME_DB:-$HOME/.openclaw/workspace/data/screentime.db}"
-TV_SCRIPT="${TV_SCRIPT:-$HOME/.openclaw/workspace/addons/device-control/appletv-access.sh}"
+TV_SCRIPT="${TV_SCRIPT:-$HOME/.openclaw/workspace/addons/device-control/device-control.sh}"
 LOG_FILE="${LOG_FILE:-$HOME/.openclaw/workspace/logs/tv-auto-off.log}"
 
 # Ensure log directory exists

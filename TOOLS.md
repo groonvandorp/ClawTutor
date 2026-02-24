@@ -12,7 +12,7 @@ Direkte Befehle ohne Guthaben-Abzug, läuft unbegrenzt:
 - `tv status` → Status anzeigen
 - `tv wohnzimmer an`, `wohnzimmer an`, `beamer aus`, `lcd status` → Einzeln steuern
 
-Script: `addons/device-control/appletv-access.sh [block|allow|status] [all|beamer|lcd|wohnzimmer]`
+Script: `addons/device-control/device-control.sh [block|allow|status] [all|beamer|lcd|wohnzimmer]`
 
 ### Session-Steuerung (Kinder)
 Mit Guthaben und Auto-Off:
