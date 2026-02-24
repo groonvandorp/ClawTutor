@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gaming consoles are now under control — ClawTutor Blog</title>
-  <meta name="description" content="Nintendo Switch and PlayStation are now controlled by ClawTutor via Pi-hole DNS — and a smart plug closes the local-play loophole." />
+  <title>Meet Melody — Music tutoring with a real MIDI keyboard — ClawTutor Blog</title>
+  <meta name="description" content="ClawTutor now has a Music tutor called Melody. A second Raspberry Pi reads a USB MIDI keyboard, sends notes via MQTT, and Melody gives real-time feedback via WhatsApp." />
   <link rel="icon" type="image/png" href="../icon.png" />
   <link rel="apple-touch-icon" href="../icon.png" />
   <style>
@@ -57,6 +57,7 @@
     }
     .pill--feature { background: rgba(61,220,132,.15); color: var(--green); }
     .pill--meta    { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+    .pill--addon   { background: rgba(155,114,244,.15); color: #9b72f4; }
 
     .post-meta { display: flex; align-items: center; gap: .65rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
     .post-date { font-size: .85rem; color: var(--muted); }
@@ -82,12 +83,33 @@
     .post-body li { margin-bottom: .4rem; }
     .post-body a { color: var(--accent); }
     .post-body code { font-family: var(--mono); font-size: .85em; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: .15rem .4rem; }
+    .post-body pre { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; overflow-x: auto; margin: 1.5rem 0; font-size: .85rem; line-height: 1.6; }
+    .post-body pre code { background: none; border: none; padding: 0; }
     .post-body blockquote { border-left: 3px solid var(--green); margin: 1.5rem 0; padding: .75rem 1.25rem; background: var(--surface); border-radius: 0 8px 8px 0; color: var(--muted); font-style: italic; }
     .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
 
     /* ── Callout box ─────────────────────────────────────────────── */
     .callout { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; margin: 1.5rem 0; font-size: .9rem; line-height: 1.6; color: var(--muted); }
     .callout strong { color: var(--text); }
+
+    /* ── Diagram ─────────────────────────────────────────────────── */
+    .arch-diagram { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; margin: 1.5rem 0; font-family: var(--mono); font-size: .8rem; line-height: 1.7; overflow-x: auto; white-space: pre; color: var(--muted); }
+
+    /* ── Reward table ────────────────────────────────────────────── */
+    .reward-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    .reward-table th, .reward-table td { text-align: left; padding: .6rem .9rem; border-bottom: 1px solid var(--border); font-size: .9rem; }
+    .reward-table th { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+    .reward-table td:last-child { font-weight: 700; color: var(--green); }
+
+    /* ── Chat mockup ─────────────────────────────────────────────── */
+    .chat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin: 1.5rem 0; }
+    .chat-bubble { max-width: 85%; padding: .65rem 1rem; border-radius: 12px; margin-bottom: .6rem; font-size: .9rem; line-height: 1.5; }
+    .chat-bubble:last-child { margin-bottom: 0; }
+    .chat-kid { background: var(--surface2); border: 1px solid var(--border); margin-right: auto; }
+    .chat-melody { background: rgba(255,91,53,.08); border: 1px solid rgba(255,91,53,.2); margin-left: auto; }
+    .chat-sender { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: .25rem; }
+    .chat-sender--kid { color: var(--blue); }
+    .chat-sender--melody { color: var(--accent); }
 
     /* ── Post nav ────────────────────────────────────────────────── */
     .post-nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 0; border-top: 1px solid var(--border); margin-top: 1rem; flex-wrap: wrap; gap: 1rem; }
@@ -133,17 +155,17 @@
       <span>/</span>
       <a href="../blog.html">Blog</a>
       <span>/</span>
-      <span>Gaming consoles under control</span>
+      <span>Meet Melody</span>
     </div>
 
     <div class="post-meta">
-      <span class="post-date">21 February 2026</span>
+      <span class="post-date">22 February 2026</span>
       <span class="pill pill--feature">Feature</span>
-      <span class="pill pill--meta">Dev update</span>
+      <span class="pill pill--addon">Addon</span>
     </div>
 
-    <h1 class="post-title">Gaming consoles are now<br><span class="grad">under control</span></h1>
-    <p class="post-lede">The Nintendo Switch and PlayStation are now fully wired into ClawTutor. DNS blocking covers online play — and a smart plug closes the local-game loophole.</p>
+    <h1 class="post-title">Meet Melody —<br><span class="grad">music tutoring with a real keyboard</span></h1>
+    <p class="post-lede">ClawTutor's third subject is live. A second Raspberry Pi reads a USB MIDI keyboard, sends notes via MQTT, and an AI tutor named Melody gives real-time feedback — all through WhatsApp.</p>
 
     <div class="author">
       <div class="author-avatar">👨‍💻</div>
@@ -159,61 +181,132 @@
 <div class="post-body">
   <div class="container">
 
-    <h2>The last holdout</h2>
+    <h2>Beyond text quizzes</h2>
 
-    <p>When I first set up ClawTutor, the Apple TV was the obvious target. Streaming is almost entirely online — block the DNS and the box is useless. Job done.</p>
+    <p>Maths and English work beautifully as text-based tutors. The kid types an answer, the tutor checks it, screen time is earned. Simple loop, clean feedback.</p>
 
-    <p>Gaming consoles are trickier. Both the Nintendo Switch and PlayStation use online services heavily — eShop, PSN, online multiplayer — but they also run a ton of content locally. Downloaded games, offline modes, local multiplayer. DNS blocking alone doesn't touch any of that.</p>
+    <p>Music is different. You can't tutor someone on the piano through text alone. You need to <em>hear</em> what they're playing — or at least see the notes. That's where the MIDI interface comes in.</p>
 
-    <p>So for a while, the consoles were on the network but outside ClawTutor's reach. Which, as any parent will tell you, the kids noticed immediately.</p>
+    <h2>The setup: two Pis, one keyboard</h2>
 
-    <h2>Step one: DNS control</h2>
+    <p>The idea is straightforward: plug a USB MIDI keyboard into a second Raspberry Pi (a 3B+ is more than enough), run a Python script that reads the MIDI data, and send it to the ClawTutor Pi via MQTT. Melody — the Music tutor agent — picks it up and knows exactly what's being played.</p>
 
-    <p>Getting the consoles under Pi-hole was straightforward. Both the Switch and PlayStation let you set a custom DNS server in their network settings. Point it at the Pi, assign the device a static IP or match by MAC address, and Pi-hole can block or unblock it per child — same as any other device.</p>
+    <div class="arch-diagram">┌─────────────────────┐     ┌─────────────────────┐
+│     Musik-Pi        │     │    ClawTutor-Pi     │
+│                     │     │                     │
+│  ┌───────────────┐  │     │  ┌───────────────┐  │
+│  │   Keyboard    │  │     │  │   Mosquitto   │  │
+│  │   (USB MIDI)  │  │     │  │ (MQTT Broker) │  │
+│  └───────┬───────┘  │     │  └───────┬───────┘  │
+│          │          │     │          │          │
+│  ┌───────▼───────┐  │     │  ┌───────▼───────┐  │
+│  │  midi_sender  │──┼─────┼──│music_receiver │  │
+│  │    (Python)   │  │ MQTT│  │   (Python)    │  │
+│  └───────────────┘  │     │  └───────┬───────┘  │
+│                     │     │          │          │
+└─────────────────────┘     │  ┌───────▼───────┐  │
+                            │  │ Melody Agent  │  │
+                            │  │  (OpenClaw)   │  │
+                            │  └───────────────┘  │
+                            └─────────────────────┘</div>
 
-    <p>Once the DNS was in place, ClawTutor could do what it already does for the TV:</p>
+    <p>The <code>midi_sender.py</code> runs on the Musik-Pi as a systemd service. It auto-detects USB MIDI devices — Korg, Yamaha, Roland, whatever you plug in. Every note press, every release, every velocity value gets published to MQTT topics on the ClawTutor Pi.</p>
+
+    <p>On the other end, <code>music_receiver.py</code> listens, aggregates the data into practice sessions, calculates how long the kid played, evaluates rhythm consistency, and feeds everything to the Melody agent inside OpenClaw.</p>
+
+    <h2>What Melody actually does</h2>
+
+    <p>Melody is a full tutor agent with her own personality, curriculum, and progress tracking — just like Matteo (Maths) and Nelly (English). But she has something the others don't: live instrument data.</p>
+
+    <p>She can see:</p>
 
     <ul>
-      <li>🎮 eShop and the PlayStation Store go dark when credits run out</li>
-      <li>🌐 Online multiplayer stops working — no internet, no matchmaking</li>
-      <li>✅ Credits earned → DNS unblocked → everything back online</li>
+      <li>🎹 Which notes were played and in what order</li>
+      <li>⏱️ How long the practice session lasted</li>
+      <li>🥁 Rhythm score — how evenly and consistently the child played</li>
+      <li>📈 Progress over days and weeks</li>
     </ul>
 
-    <p>This covers 80% of the use case. Online gaming is the main pull, and that's now gated behind earned screen time.</p>
+    <p>Here's what a typical Melody interaction looks like:</p>
 
-    <h2>Step two: closing the offline loophole</h2>
-
-    <p>The remaining 20% is local play. A downloaded Switch game or a offline PlayStation title doesn't need DNS at all — it runs entirely on the console. There's no network request to block.</p>
-
-    <blockquote>
-      "The console is off the internet, but the kids are still playing. DNS isn't enough here."
-    </blockquote>
-
-    <p>The fix is a smart plug. Plug the console into a controllable power socket, wire it to ClawTutor via the Home Assistant REST API (or directly via the plug's local API), and when screen time credits hit zero — the power goes off. No internet, no local play, no workarounds.</p>
-
-    <div class="callout">
-      💡 <strong>Why this matters:</strong> DNS blocking stops online content. A smart plug stops <em>everything</em>. Combined, there's no path left for the kids to keep playing once time is up — whether the game is online, offline, downloaded, or cached.
+    <div class="chat">
+      <div class="chat-bubble chat-kid">
+        <div class="chat-sender chat-sender--kid">Kid</div>
+        I practised for 10 minutes!
+      </div>
+      <div class="chat-bubble chat-melody">
+        <div class="chat-sender chat-sender--melody">Melody 🎹</div>
+        Wow, 10 minutes — awesome! 🎵 I saw 47 notes and your rhythm scored 72/100 — getting better! You earned <strong>20 minutes</strong> of screen time. Keep the streak going and you'll get a bonus tomorrow! 🎶
+      </div>
     </div>
 
-    <h2>What's live now</h2>
+    <p>She can also quiz on music theory — note names, intervals, chord types, composer trivia — the same way Matteo quizzes on fractions. Text-based quizzes for theory, MIDI data for practice. Both earn screen time.</p>
 
-    <p>As of today, both consoles are fully integrated in my home setup:</p>
+    <h2>Screen time for practice</h2>
+
+    <p>The reward system for Music is slightly different from the quiz-based subjects. Instead of per-answer credits, it's time-based:</p>
+
+    <table class="reward-table">
+      <thead>
+        <tr><th>Action</th><th>Reward</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1 minute of practice</td><td>+2 min screen time</td></tr>
+        <tr><td>Rhythm score ≥ 75/100</td><td>+25% bonus</td></tr>
+        <tr><td>3+ day streak</td><td>+20% bonus</td></tr>
+        <tr><td>Theory quiz (correct answer)</td><td>+10 min</td></tr>
+      </tbody>
+    </table>
+
+    <p>The bonuses stack. A kid who practices 10 minutes with good rhythm on a 3-day streak earns <strong>30 minutes</strong> of screen time (20 base + 25% rhythm + 20% streak). That's a strong incentive to keep showing up at the keyboard.</p>
+
+    <h2>Hardware: what you need</h2>
+
+    <p>The Musik-Pi is intentionally cheap and simple:</p>
 
     <ul>
-      <li>🕹️ <strong>Nintendo Switch</strong> — DNS controlled via Pi-hole, power via smart plug</li>
-      <li>🎮 <strong>PlayStation</strong> — same setup, same result</li>
-      <li>📺 <strong>Apple TV</strong> — still the primary target, unchanged</li>
+      <li>🍓 <strong>Raspberry Pi 3B+</strong> or newer — doesn't need to be fast</li>
+      <li>🎹 <strong>Any USB MIDI keyboard</strong> — Korg, Yamaha, Roland, Arturia, whatever you have</li>
+      <li>🔌 Power supply (2.5A minimum)</li>
+      <li>📶 WiFi connection to your home network</li>
     </ul>
 
-    <p>The kids figured out pretty fast that the consoles now have the same rules as the TV. That took approximately one evening of experimentation on their part and zero intervention on mine. The system handled it.</p>
+    <p>Total cost if you don't already have a Pi: about €40–50. If you already have one lying around from another project, it's essentially free.</p>
 
-    <p>You can see the full device setup on the <a href="../olivers-setup.html">Oliver's Setup</a> page.</p>
+    <div class="callout">
+      💡 <strong>No monitor needed.</strong> The Musik-Pi runs headless. Plug in the keyboard, power it up, and it auto-starts the MIDI sender via systemd. The kid just sits down and plays — Melody picks it up through WhatsApp.
+    </div>
 
-    <h2>What's next</h2>
+    <h2>MQTT under the hood</h2>
 
-    <p>Devices are mostly sorted now. The next focus is subjects — Geography is the obvious next tutor after Maths and English, and I want to add a proper exam prep mode before the school year gets serious.</p>
+    <p>The communication uses three MQTT topics:</p>
 
-    <p>If you're setting this up yourself and run into anything, <a href="https://github.com/groonvandorp/ClawTutor/issues" target="_blank">open an issue on GitHub</a>.</p>
+    <ul>
+      <li><code>clawtutor/music/notes</code> — live note-on/note-off events</li>
+      <li><code>clawtutor/music/session</code> — end-of-session summary (duration, note count, rhythm score)</li>
+      <li><code>clawtutor/music/control</code> — control commands (start/stop/reset)</li>
+    </ul>
+
+    <p>Mosquitto runs on the ClawTutor Pi as the MQTT broker. It's lightweight, stable, and needs zero maintenance once installed. The Musik-Pi connects over WiFi — no cables between the two Pis.</p>
+
+    <h2>Why a second Pi?</h2>
+
+    <p>USB MIDI needs a host device. The keyboard plugs into a USB port, and something has to read that data in real time. I could have connected the keyboard directly to the ClawTutor Pi, but I wanted the keyboard to be in the kids' room — and the ClawTutor Pi lives in the server closet. MQTT over WiFi solves that cleanly.</p>
+
+    <p>It also keeps the addon modular. If you don't want Music, you don't need the second Pi. If you do, you just add it — no changes to the main ClawTutor installation.</p>
+
+    <h2>What's next for Melody</h2>
+
+    <p>Right now, Melody tracks notes and rhythm. Future plans include:</p>
+
+    <ul>
+      <li>🎼 Specific exercises ("play C major scale ascending") with automatic grading</li>
+      <li>🎵 Song recognition — detect when the child is playing a known piece</li>
+      <li>📊 Visual progress charts in the weekly report</li>
+      <li>🎤 Voice integration — singing along to keyboard accompaniment</li>
+    </ul>
+
+    <p>The full addon documentation is on GitHub: <a href="https://github.com/groonvandorp/ClawTutor/tree/main/addons/midi-interface" target="_blank">addons/midi-interface</a>. And you can see how it fits into the overall setup on the <a href="../olivers-setup.html">Oliver's Setup</a> page.</p>
 
     <hr />
 
@@ -222,7 +315,7 @@
     <!-- ── Post nav ─────────────────────────────────────────────── -->
     <div class="post-nav">
       <a href="../blog.html">← All posts</a>
-      <a href="2026-02-22-melody-midi.html">Meet Melody — MIDI keyboard tutoring →</a>
+      <a href="2026-02-21-gaming-consoles.html">← Previous: Gaming consoles under control</a>
     </div>
 
   </div>

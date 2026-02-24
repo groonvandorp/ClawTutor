@@ -324,8 +324,8 @@
     <div class="stats-bar">
       <div class="stat-card">
         <span class="stat-icon">🍓</span>
-        <span class="stat-value grad">1</span>
-        <span class="stat-label">Raspberry Pi</span>
+        <span class="stat-value grad">2</span>
+        <span class="stat-label">Raspberry Pis</span>
       </div>
       <div class="stat-card">
         <span class="stat-icon">👦👧</span>
@@ -343,6 +343,11 @@
         <span class="stat-label">Devices controlled</span>
       </div>
       <div class="stat-card">
+        <span class="stat-icon">🎹</span>
+        <span class="stat-value" style="color:var(--accent);">1</span>
+        <span class="stat-label">MIDI Keyboard</span>
+      </div>
+      <div class="stat-card">
         <span class="stat-icon">📊</span>
         <span class="stat-value" style="color:var(--purple);">1×</span>
         <span class="stat-label">Weekly report</span>
@@ -355,8 +360,8 @@
 <section class="section">
   <div class="container">
     <div class="section-label">Architecture</div>
-    <h2>Everything on one box</h2>
-    <p class="section-intro">A single Raspberry Pi 5 runs both Pi-hole (network-level ad blocking &amp; device control) and ClawTutor. One device. Minimal attack surface. Easy to wipe and reflash if needed.</p>
+    <h2>Two Pis, one network</h2>
+    <p class="section-intro">The main Raspberry Pi 5 runs Pi-hole and ClawTutor. A second Pi connects a USB MIDI keyboard and sends live note data via MQTT — so the Music tutor Melody can hear what the kids play.</p>
 
     <div class="arch">
       <div class="arch-node arch-node--wa">
@@ -367,8 +372,8 @@
       <div class="arch-arrow">→</div>
       <div class="arch-node arch-node--pi">
         <span class="node-icon">🖥️</span>
-        <div class="node-title">Raspberry Pi 5</div>
-        <div class="node-desc">Pi-hole + OpenClaw<br>ClawTutor agents</div>
+        <div class="node-title">ClawTutor Pi 5</div>
+        <div class="node-desc">Pi-hole + OpenClaw<br>ClawTutor agents + MQTT</div>
       </div>
       <div class="arch-arrow">→</div>
       <div class="arch-node arch-node--tv">
@@ -377,11 +382,30 @@
         <div class="node-desc">TV boxes, phones, consoles, smart plugs —<br>DNS + power · blocked until credits earned</div>
       </div>
     </div>
+    <div class="arch" style="margin-top:1.5rem;">
+      <div class="arch-node" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem 1.25rem;text-align:center;">
+        <span class="node-icon">🎹</span>
+        <div class="node-title">MIDI Keyboard</div>
+        <div class="node-desc">USB connected</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem 1.25rem;text-align:center;">
+        <span class="node-icon">🍓</span>
+        <div class="node-title">Musik-Pi</div>
+        <div class="node-desc">midi_sender.py<br>reads keys, sends via MQTT</div>
+      </div>
+      <div class="arch-arrow">→ <span style="font-size:.7rem;color:var(--muted);">MQTT</span></div>
+      <div class="arch-node" style="background:var(--surface2);border:1px solid var(--accent);border-radius:var(--radius);padding:1.5rem 1.25rem;text-align:center;">
+        <span class="node-icon">🎵</span>
+        <div class="node-title">Melody Agent</div>
+        <div class="node-desc">music_receiver.py on ClawTutor Pi<br>live feedback via WhatsApp</div>
+      </div>
+    </div>
 
     <!-- Pi detail -->
     <div class="pi-box">
-      <h3 style="margin-bottom:.25rem;">What's running on the Pi</h3>
-      <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Two services, one device, one power cable.</p>
+      <h3 style="margin-bottom:.25rem;">What's running on ClawTutor Pi</h3>
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Core services on the main Pi.</p>
       <div class="pi-services">
         <div class="pi-service">
           <span class="svc-icon">🕳️</span>
@@ -409,6 +433,20 @@
           <div>
             <div class="svc-name">Cron jobs</div>
             <div class="svc-detail">Auto-blocks devices at bedtime, resets daily limits, triggers weekly report.</div>
+          </div>
+        </div>
+        <div class="pi-service">
+          <span class="svc-icon">📡</span>
+          <div>
+            <div class="svc-name">Mosquitto (MQTT Broker)</div>
+            <div class="svc-detail">Receives live MIDI data from the Musik-Pi. Topics: notes, session summaries, control commands.</div>
+          </div>
+        </div>
+        <div class="pi-service">
+          <span class="svc-icon">🎵</span>
+          <div>
+            <div class="svc-name">Music Receiver</div>
+            <div class="svc-detail">Listens to MQTT, processes practice sessions, calculates screen time rewards, and feeds data to Melody.</div>
           </div>
         </div>
         <div class="pi-service">
@@ -493,7 +531,7 @@
             <span class="subject-cmd">/english</span>
           </div>
           <div class="subject-row">
-            <span class="subject-name">🎵 Music</span>
+            <span class="subject-name">🎵 Music <span style="font-size:.7rem;color:var(--green);font-weight:700;margin-left:.3rem;">+ MIDI</span></span>
             <span class="subject-cmd">/music</span>
           </div>
           <div class="subject-row" style="opacity:.45;">
@@ -522,7 +560,7 @@
             <span class="subject-cmd">/english</span>
           </div>
           <div class="subject-row">
-            <span class="subject-name">🎵 Music</span>
+            <span class="subject-name">🎵 Music <span style="font-size:.7rem;color:var(--green);font-weight:700;margin-left:.3rem;">+ MIDI</span></span>
             <span class="subject-cmd">/music</span>
           </div>
           <div class="subject-row" style="opacity:.45;">
@@ -534,7 +572,7 @@
     </div>
 
     <p style="margin-top:1.5rem;font-size:.85rem;color:var(--muted);">
-      Each tutor adapts to the child's grade and curriculum. Progress is stored separately so the weekly report shows a clear picture per child per subject.
+      Each tutor adapts to the child's grade and curriculum. Progress is stored separately so the weekly report shows a clear picture per child per subject. The Music tutor Melody receives live MIDI data from a USB keyboard — she can hear what the kids play and give real-time feedback.
     </p>
   </div>
 </section>
@@ -707,6 +745,11 @@
     <p class="section-intro">Maths, English, and Music are live. Here's what Oliver is actively planning for the next months.</p>
 
     <div class="roadmap">
+      <div class="roadmap-item roadmap-item--done">
+        <span class="ri-icon">🎹</span>
+        <span class="ri-text"><strong>Music tutor + MIDI keyboard</strong> — Melody is live. A second Pi reads USB MIDI, sends notes via MQTT, and Melody gives real-time feedback. 1 min practice = 2 min screen time.</span>
+        <span class="ri-done">Done ✓</span>
+      </div>
       <div class="roadmap-item roadmap-item--done">
         <span class="ri-icon">🕹️</span>
         <span class="ri-text"><strong>Gaming consoles under control</strong> — Nintendo Switch &amp; PlayStation added. DNS blocks eShop &amp; online; smart plug covers local play.</span>

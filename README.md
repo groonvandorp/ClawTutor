@@ -334,7 +334,7 @@ ClawTutor/
 | [Oliver's setup](https://clawtutor.ai/olivers-setup.html) | Real-world setup walkthrough (Raspberry Pi, WhatsApp, Apple TV, Nintendo Switch, PlayStation, Pi-hole) |
 | [Contact](https://clawtutor.ai/contact.html) | Get in touch — oliver@clawtutor.ai |
 | [Built on](https://clawtutor.ai/ecosystem.html) | All projects ClawTutor depends on |
-| [Blog](https://clawtutor.ai/blog.html) | Dev log & upcoming changes — latest: [Gaming consoles under control](https://clawtutor.ai/blog/2026-02-21-gaming-consoles.html) |
+| [Blog](https://clawtutor.ai/blog.html) | Dev log & upcoming changes — latest: [Meet Melody — MIDI keyboard tutoring](https://clawtutor.ai/blog/2026-02-22-melody-midi.html) |
 | [SETUP.md](SETUP.md) | Complete installation guide |
 | [addons/DEVICE-CONTROL.md](addons/DEVICE-CONTROL.md) | Optional: Control any device via Pi-hole DNS |
 | [addons/DASHBOARD.md](addons/DASHBOARD.md) | Optional: Physical status display |
