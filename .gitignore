@@ -49,3 +49,4 @@ __pycache__/
 docs/kids/
 docs/classes/
 docs/tutors/
+addons/device-control/devices.conf

@@ -6,16 +6,24 @@ PIHOLE_API="http://localhost/api"
 PIHOLE_PASSWORD="${PIHOLE_PASSWORD:-clawtutor2026}"
 BLOCKED_GROUP=1   # Blocked group
 ALLOWED_GROUP=0   # Default (erlaubt)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# All controlled devices (MAC addresses)
+# All controlled devices (MAC addresses) — defaults, override via devices.conf
 declare -A DEVICES=(
-    # TVs — replace with your real MAC addresses
     ["beamer"]="AA:BB:CC:DD:EE:01"
     ["lcd"]="AA:BB:CC:DD:EE:02"
     ["wohnzimmer"]="AA:BB:CC:DD:EE:03"
-    # Gaming
     ["switch"]="AA:BB:CC:DD:EE:04"
 )
+
+# Load local config (real MACs) if exists
+if [ -f "$SCRIPT_DIR/devices.conf" ]; then
+    source "$SCRIPT_DIR/devices.conf"
+    [ -n "$DEVICE_MAC_beamer" ] && DEVICES["beamer"]="$DEVICE_MAC_beamer"
+    [ -n "$DEVICE_MAC_lcd" ] && DEVICES["lcd"]="$DEVICE_MAC_lcd"
+    [ -n "$DEVICE_MAC_wohnzimmer" ] && DEVICES["wohnzimmer"]="$DEVICE_MAC_wohnzimmer"
+    [ -n "$DEVICE_MAC_switch" ] && DEVICES["switch"]="$DEVICE_MAC_switch"
+fi
 
 # Device categories
 declare -A DEVICE_TYPES=(

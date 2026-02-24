@@ -1,0 +1,7 @@
+# Device MAC addresses — copy to devices.conf and fill in real MACs
+# Format: DEVICE_MAC_<name>=<mac>
+
+DEVICE_MAC_beamer="AA:BB:CC:DD:EE:01"
+DEVICE_MAC_lcd="AA:BB:CC:DD:EE:02"
+DEVICE_MAC_wohnzimmer="AA:BB:CC:DD:EE:03"
+DEVICE_MAC_switch="AA:BB:CC:DD:EE:04"
