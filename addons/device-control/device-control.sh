@@ -100,10 +100,10 @@ get_status() {
     fi
     
     curl -s "$PIHOLE_API/clients" -H "sid: $sid" | \
-        python3 -c "
-import sys, json
+        MAC_ADDR="$mac" python3 -c "
+import sys, json, os
 data = json.load(sys.stdin)
-mac = '$mac'.upper()
+mac = os.environ.get('MAC_ADDR', '').upper()
 for c in data.get('clients', []):
     if c['client'].upper() == mac:
         groups = c.get('groups', [])
