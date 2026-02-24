@@ -1,0 +1,14 @@
+[Unit]
+Description=ClawTutor Music Receiver
+After=network.target mosquitto.service
+
+[Service]
+ExecStart=/home/pi/.openclaw/workspace/scripts/music-venv/bin/python /home/pi/.openclaw/workspace/scripts/music_receiver.py
+WorkingDirectory=/home/pi/.openclaw/workspace/scripts
+Restart=always
+RestartSec=10
+User=pi
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,14 @@
+[Unit]
+Description=ClawTutor MIDI Listener
+After=network.target
+
+[Service]
+ExecStart=/home/pi/clawtutor/venv/bin/python /home/pi/clawtutor/midi_sender.py
+WorkingDirectory=/home/pi/clawtutor
+Restart=always
+RestartSec=10
+User=pi
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
