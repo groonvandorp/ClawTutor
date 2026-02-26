@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>First Community Contribution — A Security Fix — ClawTutor Blog</title>
+  <meta name="description" content="ClawTutor received its first pull request: a security fix for shell injection in the device control script. Thanks @spnmlr!" />
+  <link rel="icon" type="image/png" href="../assets/icon.png" />
+  <link rel="apple-touch-icon" href="../assets/icon.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0b0d12;
+      --surface:  #13161e;
+      --surface2: #1b1f2a;
+      --border:   #252938;
+      --accent:   #ff5b35;
+      --accent2:  #ffb03a;
+      --green:    #3ddc84;
+      --blue:     #4fa3e0;
+      --purple:   #9b72f4;
+      --red:      #f44336;
+      --text:     #eef0f6;
+      --muted:    #7a7f94;
+      --radius:   14px;
+      --font:     'Inter', system-ui, -apple-system, sans-serif;
+      --mono:     'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 17px; line-height: 1.75; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: 720px; margin: 0 auto; padding: 0 1.5rem; }
+    .grad { background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,13,18,.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: .9rem 0; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    .nav-logo { display: flex; align-items: center; gap: .5rem; font-size: 1.1rem; font-weight: 800; color: var(--text); }
+    .nav-logo:hover { text-decoration: none; opacity: .85; }
+    .nav-links { display: flex; align-items: center; gap: 1.75rem; }
+    .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    /* ── Mobile Nav ──────────────────────────────────────────── */
+    .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: .5rem; }
+    .nav-toggle svg { width: 24px; height: 24px; color: var(--text); }
+    
+    @media (max-width: 768px) {
+      .nav-toggle { display: block; }
+      .nav-links {
+        display: none;
+        position: absolute; top: 100%; left: 0; right: 0;
+        flex-direction: column; gap: 0;
+        background: var(--surface); border-bottom: 1px solid var(--border);
+        padding: 1rem 1.5rem;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: .75rem 0; width: 100%; border-bottom: 1px solid var(--border); }
+      .nav-links a:last-child { border-bottom: none; }
+      nav .nav-inner { position: relative; }
+    }
+
+    .post-header { padding: 4rem 0 2.5rem; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .breadcrumb { font-size: .85rem; color: var(--muted); margin-bottom: 1.25rem; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--text); }
+
+    .pill { display: inline-flex; align-items: center; gap: .3rem; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; border-radius: 999px; padding: .22rem .65rem; }
+    .pill--security { background: rgba(244,67,54,.15); color: var(--red); }
+    .pill--community { background: rgba(155,114,244,.15); color: var(--purple); }
+    .pill--meta { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+
+    h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); font-weight: 800; line-height: 1.2; letter-spacing: -.03em; margin-top: 1rem; }
+    .post-meta { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.25rem; }
+
+    .post-body { padding: 3rem 0 4rem; }
+    .post-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2.5rem 0 1rem; }
+    .post-body p { margin-bottom: 1.25rem; }
+    .post-body ul, .post-body ol { padding-left: 1.4rem; margin-bottom: 1.25rem; }
+    .post-body li { margin-bottom: .4rem; }
+    .post-body pre { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; overflow-x: auto; font-family: var(--mono); font-size: .85rem; line-height: 1.6; margin: 1.5rem 0; }
+    .post-body code { font-family: var(--mono); font-size: .88em; background: var(--surface2); border-radius: 4px; padding: .15rem .35rem; }
+    .post-body pre code { background: none; padding: 0; }
+
+    .callout { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin: 2rem 0; }
+    .callout--security { border-color: var(--red); background: rgba(244,67,54,.05); }
+    .callout-title { font-weight: 700; margin-bottom: .5rem; display: flex; align-items: center; gap: .5rem; }
+    .callout p:last-child { margin-bottom: 0; }
+
+    .contributor { display: flex; align-items: center; gap: 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin: 2rem 0; }
+    .contributor img { width: 48px; height: 48px; border-radius: 50%; }
+    .contributor-info { flex: 1; }
+    .contributor-name { font-weight: 700; }
+    .contributor-handle { color: var(--muted); font-size: .9rem; }
+
+    .back-link { display: inline-flex; align-items: center; gap: .4rem; font-size: .9rem; font-weight: 600; color: var(--muted); margin-top: 2rem; }
+    .back-link:hover { color: var(--text); text-decoration: none; }
+
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 3rem 0; margin-top: 2rem; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2rem; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+    .footer-links a { color: var(--muted); font-size: .9rem; }
+    .footer-links a:hover { color: var(--text); text-decoration: none; }
+    .footer-bottom { width: 100%; text-align: center; padding-top: 2rem; border-top: 1px solid var(--border); margin-top: 1rem; }
+    .footer-bottom p { color: var(--muted); font-size: .85rem; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo"><img src="../assets/icon.png" alt="" style="height:32px;width:32px;border-radius:7px;" /><span>ClawTutor</span></a>
+    <button class="nav-toggle" aria-label="Menu" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+    <div class="nav-links">
+      <a href="../index.html#features">Features</a>
+      <a href="../courses.html">Courses</a>
+      <a href="../blog.html" class="active">Blog</a>
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<div class="post-header">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="../index.html">ClawTutor</a>
+      <span style="color:var(--border);">/</span>
+      <a href="../blog.html">Blog</a>
+      <span style="color:var(--border);">/</span>
+      <span>First PR</span>
+    </div>
+    <h1>First Community Contribution 🎉</h1>
+    <div class="post-meta">
+      <span class="pill pill--security">Security</span>
+      <span class="pill pill--community">Community</span>
+      <span class="pill pill--meta">26 Feb 2026</span>
+      <span class="pill pill--meta">2 min read</span>
+    </div>
+  </div>
+</div>
+
+<article class="post-body">
+  <div class="container">
+
+    <p>ClawTutor just received its first pull request — and it's a security fix. Five days after launch, someone actually read the code, found a vulnerability, and submitted a proper fix. This is exactly what open source is supposed to be.</p>
+
+    <div class="contributor">
+      <img src="https://avatars.githubusercontent.com/u/29886906?v=4" alt="spnmlr" />
+      <div class="contributor-info">
+        <div class="contributor-name">spnmlr</div>
+        <div class="contributor-handle"><a href="https://github.com/spnmlr" target="_blank">@spnmlr on GitHub</a></div>
+      </div>
+    </div>
+
+    <h2>The Vulnerability</h2>
+
+    <p>The device control script had a classic shell injection vulnerability. MAC addresses from the config file were interpolated directly into a Python command:</p>
+
+    <pre><code class="language-bash"># Before (vulnerable)
+curl ... | python3 -c "
+import sys, json
+mac = '$mac'.upper()  # ← Direct interpolation!
+..."</code></pre>
+
+    <p>If an attacker could modify the <code>devices.conf</code> file (which lives on the Pi), they could inject arbitrary Python code that would execute with the script's privileges.</p>
+
+    <div class="callout callout--security">
+      <div class="callout-title">⚠️ Severity: Critical (if exploited)</div>
+      <p>In practice, exploiting this requires local access to the Pi's filesystem — which means the attacker would already have significant access. But defense in depth matters: even with filesystem access, you shouldn't be able to escalate to code execution through a config file.</p>
+    </div>
+
+    <h2>The Fix</h2>
+
+    <p>The fix is elegant: pass the MAC address as an environment variable instead of embedding it in the command string.</p>
+
+    <pre><code class="language-bash"># After (safe)
+curl ... | MAC_ADDR="$mac" python3 -c "
+import sys, json, os
+mac = os.environ.get('MAC_ADDR', '').upper()  # ← From env
+..."</code></pre>
+
+    <p>Environment variables can't break out of their context. Even a malicious value like <code>'; rm -rf /; '</code> would just become an invalid MAC address, not executed code.</p>
+
+    <h2>Why This Matters</h2>
+
+    <p>This is the first external contribution to ClawTutor, and it set exactly the right tone:</p>
+
+    <ul>
+      <li><strong>Someone read the code</strong> — not just the README, the actual shell scripts</li>
+      <li><strong>They found a real issue</strong> — not a typo or style nitpick</li>
+      <li><strong>They submitted a proper fix</strong> — clear description, minimal diff, correct solution</li>
+    </ul>
+
+    <p>This is the dream scenario for any open source project. Thank you, <a href="https://github.com/spnmlr" target="_blank">@spnmlr</a>.</p>
+
+    <h2>Lessons</h2>
+
+    <p>For anyone writing shell scripts that call Python (or any interpreter):</p>
+
+    <ol>
+      <li><strong>Never interpolate variables into code strings</strong> — use environment variables, command-line arguments with proper escaping, or temporary files</li>
+      <li><strong>Assume config files can be malicious</strong> — even if you control the system, defense in depth prevents privilege escalation</li>
+      <li><strong>Open source works</strong> — more eyes find more bugs</li>
+    </ol>
+
+    <p>The fix is live. If you're running ClawTutor, pull the latest changes.</p>
+
+    <a href="../blog.html" class="back-link">← Back to Blog</a>
+
+  </div>
+</article>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-links">
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank">GitHub</a>
+      <a href="https://github.com/groonvandorp/ClawTutor/blob/main/LICENSE" target="_blank">License</a>
+    </div>
+    <a href="https://github.com/groonvandorp/ClawTutor" target="_blank" title="GitHub" style="opacity:.5;transition:opacity .15s;display:flex;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">
+      <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.333-1.754-1.333-1.754-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.806 1.304 3.49.997.108-.776.42-1.305.763-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.468-2.38 1.235-3.22-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.3 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.29-1.552 3.296-1.23 3.296-1.23.653 1.652.242 2.873.118 3.176.77.84 1.233 1.91 1.233 3.22 0 4.61-2.805 5.625-5.475 5.92.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z"/></svg>
+    </a>
+  </div>
+  <div class="footer-bottom">
+    <p><img src="../assets/icon.png" alt="" style="height:22px;width:22px;vertical-align:middle;border-radius:5px;margin-right:.4rem;" />ClawTutor — made with ❤️ by <a href="https://github.com/groonvandorp" target="_blank">Oliver Gruhn-van Dorp</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
