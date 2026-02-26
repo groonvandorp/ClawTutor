@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oliver's Setup — ClawTutor in the real world</title>
+  <meta name="description" content="A real dad's real ClawTutor setup: Raspberry Pi 5, Pi-hole, streaming box control, WhatsApp, two kids, weekly reports." />
+  <link rel="icon" type="image/png" href="icon.png" />
+  <link rel="apple-touch-icon" href="icon.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0b0d12;
+      --surface:  #13161e;
+      --surface2: #1b1f2a;
+      --border:   #252938;
+      --accent:   #ff5b35;
+      --accent2:  #ffb03a;
+      --green:    #3ddc84;
+      --blue:     #4fa3e0;
+      --purple:   #9b72f4;
+      --text:     #eef0f6;
+      --muted:    #7a7f94;
+      --radius:   14px;
+      --font:     'Inter', system-ui, -apple-system, sans-serif;
+      --mono:     'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    h1 { font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; }
+    h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 700; letter-spacing: -0.02em; }
+    h3 { font-size: 1.1rem; font-weight: 600; }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    .section    { padding: 5rem 0; }
+    .section--alt { background: var(--surface); }
+
+    .grad {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    /* ── Nav ─────────────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(11,13,18,.85); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: .9rem 0;
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: .5rem; font-size: 1.1rem; font-weight: 800; color: var(--text); }
+    .nav-logo:hover { text-decoration: none; opacity: .85; }
+    .nav-links { display: flex; align-items: center; gap: 1.75rem; }
+    .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .nav-links a.active { color: var(--text); }
+
+    /* ── Page Hero ───────────────────────────────────────────────── */
+    .page-hero {
+      padding: 5rem 0 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .breadcrumb { font-size: .85rem; color: var(--muted); margin-bottom: 1.5rem; display: flex; align-items: center; gap: .5rem; }
+    .breadcrumb a { color: var(--muted); }
+    .breadcrumb a:hover { color: var(--text); }
+    .tag {
+      display: inline-flex; align-items: center; gap: .35rem;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 999px; padding: .25rem .75rem; font-size: .8rem;
+      color: var(--muted); margin-bottom: 1.25rem;
+    }
+    .page-hero p.lead { font-size: 1.15rem; color: var(--muted); max-width: 600px; margin-top: 1rem; line-height: 1.7; }
+
+    /* ── Stats bar ───────────────────────────────────────────────── */
+    .stats-bar {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem; margin-top: 3rem;
+    }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: .25rem;
+    }
+    .stat-icon  { font-size: 1.3rem; line-height: 1; margin-bottom: .1rem; }
+    .stat-value { font-size: 2rem; font-weight: 800; }
+    .stat-label { font-size: .8rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+
+    /* ── Architecture ────────────────────────────────────────────── */
+    .arch {
+      display: grid;
+      grid-template-columns: 1fr 40px 1fr 40px 1fr;
+      align-items: center;
+      gap: 0;
+      margin: 3rem 0;
+    }
+    @media (max-width: 700px) {
+      .arch { grid-template-columns: 1fr; gap: .5rem; }
+      .arch-arrow { transform: rotate(90deg); }
+    }
+    .arch-node {
+      background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.5rem; text-align: center;
+    }
+    .arch-node .node-icon { font-size: 2rem; display: flex; justify-content: center; margin-bottom: .5rem; }
+    .arch-node .node-icon img { display: block; }
+    .arch-node .node-title { font-weight: 700; font-size: 1rem; }
+    .arch-node .node-desc { font-size: .8rem; color: var(--muted); margin-top: .25rem; }
+    .arch-node--pi { border-color: var(--accent); }
+    .arch-node--wa { border-color: var(--green); }
+    .arch-node--tv { border-color: var(--blue); }
+    .arch-arrow { text-align: center; color: var(--muted); font-size: 1.4rem; user-select: none; }
+
+    /* ── Pi detail box ────────────────────────────────────────────── */
+    .pi-box {
+      background: var(--surface); border: 1px solid var(--accent);
+      border-radius: var(--radius); padding: 2rem; position: relative; overflow: hidden;
+      margin: 2rem 0;
+    }
+    .pi-box::before {
+      content: 'Raspberry Pi 5';
+      position: absolute; top: .75rem; right: 1rem;
+      font-size: .7rem; text-transform: uppercase; letter-spacing: .1em;
+      color: var(--accent); font-weight: 700;
+    }
+    .pi-services {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;
+    }
+    .pi-service {
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem;
+      display: flex; align-items: flex-start; gap: .75rem;
+    }
+    .pi-service .svc-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .pi-service .svc-name { font-weight: 700; font-size: .95rem; }
+    .pi-service .svc-detail { font-size: .8rem; color: var(--muted); margin-top: .2rem; }
+
+    /* ── Kids grid ───────────────────────────────────────────────── */
+    .kids-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem;
+    }
+    .kid-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem;
+    }
+    .kid-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+    .kid-avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+    .kid-avatar--1 { background: linear-gradient(135deg, #ff5b35, #ff8c5a); }
+    .kid-avatar--2 { background: linear-gradient(135deg, #4fa3e0, #7bc4f0); }
+    .kid-name { font-weight: 700; font-size: 1.1rem; }
+    .kid-meta { font-size: .8rem; color: var(--muted); }
+
+    .subject-list { display: flex; flex-direction: column; gap: .6rem; }
+    .subject-row {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--surface2); border-radius: 8px; padding: .6rem .9rem;
+    }
+    .subject-name { font-size: .9rem; font-weight: 500; display: flex; align-items: center; gap: .5rem; }
+    .subject-cmd { font-family: var(--mono); font-size: .75rem; color: var(--accent); background: rgba(255,91,53,.1); padding: .2rem .5rem; border-radius: 4px; }
+
+    /* ── WhatsApp channel box ────────────────────────────────────── */
+    .channel-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem;
+      display: flex; gap: 1.5rem; align-items: flex-start;
+    }
+    @media (max-width: 600px) { .channel-card { flex-direction: column; } }
+    .channel-icon { font-size: 2.5rem; flex-shrink: 0; }
+    .channel-label { font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: .25rem; }
+    .channel-title { font-weight: 700; font-size: 1.2rem; }
+    .channel-detail { color: var(--muted); font-size: .9rem; margin-top: .4rem; line-height: 1.6; }
+    .phone-badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: rgba(61,220,132,.1); border: 1px solid rgba(61,220,132,.3);
+      color: var(--green); border-radius: 6px; padding: .3rem .8rem; font-size: .85rem; font-weight: 600;
+      margin-top: .75rem; font-family: var(--mono);
+    }
+
+    /* ── Device grid ─────────────────────────────────────────────── */
+    .device-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem; margin-top: 2rem;
+    }
+    .device-card {
+      background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.25rem; display: flex; flex-direction: column; gap: .3rem; position: relative;
+    }
+    .device-card--active { border-color: var(--accent); }
+    .device-card--note { border-style: dashed; opacity: .8; }
+    .device-icon { font-size: 1.75rem; margin-bottom: .2rem; }
+    .device-name { font-weight: 700; font-size: .95rem; }
+    .device-detail { font-size: .78rem; color: var(--muted); line-height: 1.5; flex: 1; }
+    .device-badge {
+      display: inline-flex; align-self: flex-start; margin-top: .5rem;
+      font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+      background: rgba(255,91,53,.12); color: var(--accent);
+      border-radius: 4px; padding: .2rem .5rem;
+    }
+    .device-badge--on { background: rgba(61,220,132,.12); color: var(--green); }
+    .device-badge--muted { background: var(--surface); color: var(--muted); }
+
+    /* ── Device control flow ──────────────────────────────────────── */
+    .dns-flow {
+      display: flex; flex-direction: column; gap: .75rem; margin-top: 1.5rem;
+    }
+    .dns-step {
+      display: flex; align-items: center; gap: 1rem;
+      background: var(--surface2); border-radius: 10px; padding: .85rem 1.1rem;
+    }
+    .dns-step .step-icon { font-size: 1.2rem; width: 36px; text-align: center; flex-shrink: 0; }
+    .dns-step .step-text { font-size: .9rem; }
+    .dns-step .step-text strong { color: var(--text); }
+    .dns-step .step-text span { color: var(--muted); }
+    .badge-block { display: inline-block; background: rgba(255,91,53,.12); color: var(--accent); border-radius: 4px; padding: .1rem .4rem; font-family: var(--mono); font-size: .8rem; }
+    .badge-allow { display: inline-block; background: rgba(61,220,132,.12); color: var(--green); border-radius: 4px; padding: .1rem .4rem; font-family: var(--mono); font-size: .8rem; }
+
+    /* ── Weekly report mock ──────────────────────────────────────── */
+    .report-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem;
+      font-family: var(--mono); font-size: .85rem; line-height: 1.8;
+      max-width: 560px;
+    }
+    .report-header { color: var(--accent); font-weight: 700; font-size: 1rem; margin-bottom: .75rem; }
+    .report-line { display: flex; justify-content: space-between; padding: .3rem 0; border-bottom: 1px solid var(--border); }
+    .report-line:last-child { border-bottom: none; }
+    .report-line .rk { color: var(--muted); }
+    .report-line .rv { color: var(--text); font-weight: 600; }
+    .report-line .rv.good { color: var(--green); }
+    .report-section { color: var(--accent2); font-weight: 700; margin: 1rem 0 .25rem; }
+
+    /* ── Coming soon ─────────────────────────────────────────────── */
+    .roadmap { display: flex; flex-direction: column; gap: .5rem; margin-top: 1.5rem; }
+    .roadmap-item {
+      display: flex; align-items: center; gap: .9rem;
+      padding: .75rem 1rem; background: var(--surface2); border-radius: 8px;
+    }
+    .roadmap-item .ri-icon { font-size: 1.1rem; width: 28px; text-align: center; flex-shrink: 0; }
+    .roadmap-item .ri-text { font-size: .9rem; }
+    .roadmap-item--done { border-left: 3px solid var(--green); }
+    .roadmap-item .ri-done {
+      margin-left: auto; font-size: .7rem; text-transform: uppercase; letter-spacing: .06em;
+      background: color-mix(in srgb, var(--green) 15%, transparent); border: 1px solid var(--green);
+      color: var(--green); border-radius: 4px; padding: .15rem .5rem;
+    }
+    .roadmap-item .ri-soon {
+      margin-left: auto; font-size: .7rem; text-transform: uppercase; letter-spacing: .06em;
+      background: var(--surface); border: 1px solid var(--border); color: var(--muted);
+      border-radius: 4px; padding: .15rem .5rem;
+    }
+
+    /* ── CTA banner ──────────────────────────────────────────────── */
+    .cta-banner {
+      text-align: center; padding: 5rem 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+    .cta-banner h2 { margin-bottom: 1rem; }
+    .cta-banner p { color: var(--muted); margin-bottom: 2rem; }
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .75rem 1.6rem; border-radius: 8px; font-weight: 600;
+      font-size: .95rem; cursor: pointer; border: none; transition: all .2s; text-decoration: none;
+    }
+    .btn--primary { background: var(--accent); color: #fff; box-shadow: 0 0 28px rgba(255,91,53,.35); }
+    .btn--primary:hover { background: #ff7050; transform: translateY(-1px); text-decoration: none; }
+    .btn--ghost { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+    .btn--ghost:hover { border-color: var(--text); text-decoration: none; }
+
+    /* ── Footer ──────────────────────────────────────────────────── */
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 2.5rem 0; text-align: center; }
+    footer p { color: var(--muted); font-size: .85rem; margin-top: .4rem; }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-bottom: 1.5rem; }
+    .footer-links a { font-size: .85rem; }
+
+    /* ── Section label ───────────────────────────────────────────── */
+    .section-label {
+      font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em;
+      color: var(--accent); margin-bottom: .75rem;
+    }
+    .section-intro { color: var(--muted); margin-top: .5rem; max-width: 560px; line-height: 1.7; }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ──────────────────────────────────────────────────────── -->
+<nav>
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="icon.png" alt="" style="height:32px;width:32px;border-radius:7px;" />
+      <span>ClawTutor</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#how-it-works">How it works</a>
+      <a href="index.html#features">Features</a>
+      <a href="index.html#install">Install</a>
+      <a href="courses.html">Courses</a>
+      <a href="olivers-setup.html" class="active">Real setup</a>
+      <a href="ecosystem.html">Built on</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html">Contact</a>
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Page Hero ─────────────────────────────────────────────────── -->
+<div class="page-hero section--alt">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="index.html">ClawTutor</a>
+      <span>/</span>
+      <span>Oliver's Setup</span>
+    </div>
+    <div class="tag">🏠 Real-world example</div>
+    <h1>Oliver's setup<br><span class="grad">in production.</span></h1>
+    <p class="lead">
+      This isn't a demo. One Raspberry Pi, one Pi-hole, one dedicated WhatsApp number,
+      two kids, three subjects — and zero daily screen time arguments.
+      Here's exactly how it's wired up.
+    </p>
+
+    <!-- Stats bar -->
+    <div class="stats-bar">
+      <div class="stat-card">
+        <span class="stat-icon">🍓</span>
+        <span class="stat-value grad">2</span>
+        <span class="stat-label">Raspberry Pis</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">👦👧</span>
+        <span class="stat-value" style="color:var(--green);">2</span>
+        <span class="stat-label">Kids</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">🧮🇬🇧🎵</span>
+          <span class="stat-value" style="color:var(--accent2);">3</span>
+          <span class="stat-label">Subjects</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">📺📱🎮</span>
+        <span class="stat-value" style="color:var(--blue);">All</span>
+        <span class="stat-label">Devices controlled</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">🎹</span>
+        <span class="stat-value" style="color:var(--accent);">1</span>
+        <span class="stat-label">MIDI Keyboard</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">📊</span>
+        <span class="stat-value" style="color:var(--purple);">1×</span>
+        <span class="stat-label">Weekly report</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Architecture overview ─────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="section-label">Architecture</div>
+    <h2>Two Pis, one network</h2>
+    <p class="section-intro">The main Raspberry Pi 5 runs Pi-hole and ClawTutor. A second Pi connects a USB MIDI keyboard and sends live note data via MQTT — so the Music tutor Melody can hear what the kids play.</p>
+
+    <div class="arch">
+      <div class="arch-node arch-node--wa">
+        <span class="node-icon"><img src="https://cdn.simpleicons.org/whatsapp/25D366" alt="WhatsApp" width="36" height="36" /></span>
+        <div class="node-title">WhatsApp</div>
+        <div class="node-desc">Kids' phones<br>dedicated ClawTutor number</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node arch-node--pi">
+        <span class="node-icon">🖥️</span>
+        <div class="node-title">ClawTutor Pi 5</div>
+        <div class="node-desc">Pi-hole + OpenClaw<br>ClawTutor agents + MQTT</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node arch-node--tv">
+        <span class="node-icon" style="font-size:1.5rem;">📺 📱 🎮 🔌</span>
+        <div class="node-title">Home devices</div>
+        <div class="node-desc">TV boxes, phones, consoles, smart plugs —<br>DNS + power · blocked until credits earned</div>
+      </div>
+    </div>
+    <div class="arch" style="margin-top:1.5rem;">
+      <div class="arch-node" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem 1.25rem;text-align:center;">
+        <span class="node-icon">🎹</span>
+        <div class="node-title">MIDI Keyboard</div>
+        <div class="node-desc">USB connected</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem 1.25rem;text-align:center;">
+        <span class="node-icon">🍓</span>
+        <div class="node-title">Musik-Pi</div>
+        <div class="node-desc">midi_sender.py<br>reads keys, sends via MQTT</div>
+      </div>
+      <div class="arch-arrow">→ <span style="font-size:.7rem;color:var(--muted);">MQTT</span></div>
+      <div class="arch-node" style="background:var(--surface2);border:1px solid var(--accent);border-radius:var(--radius);padding:1.5rem 1.25rem;text-align:center;">
+        <span class="node-icon">🎵</span>
+        <div class="node-title">Melody Agent</div>
+        <div class="node-desc">music_receiver.py on ClawTutor Pi<br>live feedback via WhatsApp</div>
+      </div>
+    </div>
+
+    <!-- Pi detail -->
+    <div class="pi-box">
+      <h3 style="margin-bottom:.25rem;">What's running on ClawTutor Pi</h3>
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Core services on the main Pi.</p>
+      <div class="pi-services">
+        <div class="pi-service">
+          <span class="svc-icon">🕳️</span>
+          <div>
+            <div class="svc-name">Pi-hole</div>
+            <div class="svc-detail">DNS-level ad blocker &amp; device firewall. Controls what streaming boxes, consoles and phones can resolve — and when.</div>
+          </div>
+        </div>
+        <div class="pi-service">
+          <span class="svc-icon">🦞</span>
+          <div>
+            <div class="svc-name">OpenClaw + ClawTutor</div>
+            <div class="svc-detail">AI gateway running the tutor agents, managing screen time credits, and sending weekly reports.</div>
+          </div>
+        </div>
+        <div class="pi-service">
+          <span class="svc-icon">🗄️</span>
+          <div>
+            <div class="svc-name">SQLite DB</div>
+            <div class="svc-detail">Stores earned credits per child. Lightweight, local, no cloud required.</div>
+          </div>
+        </div>
+        <div class="pi-service">
+          <span class="svc-icon">⏰</span>
+          <div>
+            <div class="svc-name">Cron jobs</div>
+            <div class="svc-detail">Auto-blocks devices at bedtime, resets daily limits, triggers weekly report.</div>
+          </div>
+        </div>
+        <div class="pi-service">
+          <span class="svc-icon">📡</span>
+          <div>
+            <div class="svc-name">Mosquitto (MQTT Broker)</div>
+            <div class="svc-detail">Receives live MIDI data from the Musik-Pi. Topics: notes, session summaries, control commands.</div>
+          </div>
+        </div>
+        <div class="pi-service">
+          <span class="svc-icon">🎵</span>
+          <div>
+            <div class="svc-name">Music Receiver</div>
+            <div class="svc-detail">Listens to MQTT, processes practice sessions, calculates screen time rewards, and feeds data to Melody.</div>
+          </div>
+        </div>
+        <div class="pi-service">
+          <span class="svc-icon">🏠</span>
+          <div>
+            <div class="svc-name">Home automation (optional)</div>
+            <div class="svc-detail">ClawTutor can call Home Assistant or smart plug APIs to cut power — blocking even offline games and local play.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WhatsApp channel ───────────────────────────────────────────── -->
+<section class="section section--alt">
+  <div class="container">
+    <div class="section-label">Channel</div>
+    <h2>A number just for ClawTutor</h2>
+    <p class="section-intro">A dedicated phone number keeps ClawTutor cleanly separated from any personal accounts. The Pi never touches personal messages. A pay-per-use SIM is enough — you only need it to register the number, not for active data or calls.</p>
+
+    <div style="margin-top:2rem;">
+      <div class="channel-card">
+        <div class="channel-icon">
+          <img src="https://cdn.simpleicons.org/whatsapp/25D366" alt="WhatsApp" width="44" height="44" />
+        </div>
+        <div>
+          <div class="channel-label">Active channel</div>
+          <div class="channel-title">WhatsApp via OpenClaw Gateway</div>
+          <div class="channel-detail">
+            ClawTutor has its own phone number registered with WhatsApp. Kids message their tutor just like messaging a friend — no app to install, no login, no friction. The tutors respond in seconds.
+          </div>
+          <div class="phone-badge">📱 Pay-per-use SIM · own number</div>
+        </div>
+      </div>
+
+      <div style="margin-top:1rem;padding:1rem 1.25rem;background:var(--surface2);border-radius:10px;font-size:.85rem;color:var(--muted);">
+        💡 <strong style="color:var(--text);">Why WhatsApp?</strong>
+        Both kids already use it. No new app needed. Works on any phone.
+        ClawTutor also supports other channels — WhatsApp is just what works best here.
+        <div style="display:flex;align-items:center;gap:1rem;margin-top:.75rem;flex-wrap:wrap;">
+          <span style="color:var(--muted);font-size:.8rem;">Also works with:</span>
+          <span style="display:flex;align-items:center;gap:.35rem;color:var(--text);font-size:.82rem;font-weight:500;">
+            <img src="https://cdn.simpleicons.org/telegram/26A5E4" alt="" width="18" height="18" /> Telegram
+          </span>
+          <span style="display:flex;align-items:center;gap:.35rem;color:var(--text);font-size:.82rem;font-weight:500;">
+            <img src="https://cdn.simpleicons.org/signal/3A76F0" alt="" width="18" height="18" /> Signal
+          </span>
+          <span style="display:flex;align-items:center;gap:.35rem;color:var(--text);font-size:.82rem;font-weight:500;">
+            <img src="https://cdn.simpleicons.org/discord/5865F2" alt="" width="18" height="18" /> Discord
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Kids & subjects ────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="section-label">Children & Subjects</div>
+    <h2>Two kids, three subjects each</h2>
+    <p class="section-intro">Each child gets their own AI tutor per subject — with a separate personality, curriculum, and progress tracking. More subjects are on the roadmap.</p>
+
+    <div class="kids-grid">
+      <!-- Kid 1 -->
+      <div class="kid-card">
+        <div class="kid-header">
+          <div class="kid-avatar kid-avatar--1">👦</div>
+          <div>
+            <div class="kid-name">Child 1</div>
+            <div class="kid-meta">Dedicated WhatsApp thread · own credits</div>
+          </div>
+        </div>
+        <div class="subject-list">
+          <div class="subject-row">
+            <span class="subject-name">🧮 Maths</span>
+            <span class="subject-cmd">/math</span>
+          </div>
+          <div class="subject-row">
+            <span class="subject-name">🇬🇧 English</span>
+            <span class="subject-cmd">/english</span>
+          </div>
+          <div class="subject-row">
+            <span class="subject-name">🎵 Music <span style="font-size:.7rem;color:var(--green);font-weight:700;margin-left:.3rem;">+ MIDI</span></span>
+            <span class="subject-cmd">/music</span>
+          </div>
+          <div class="subject-row" style="opacity:.45;">
+            <span class="subject-name">➕ More coming…</span>
+            <span class="subject-cmd">soon</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kid 2 -->
+      <div class="kid-card">
+        <div class="kid-header">
+          <div class="kid-avatar kid-avatar--2">👧</div>
+          <div>
+            <div class="kid-name">Child 2</div>
+            <div class="kid-meta">Dedicated WhatsApp thread · own credits</div>
+          </div>
+        </div>
+        <div class="subject-list">
+          <div class="subject-row">
+            <span class="subject-name">🧮 Maths</span>
+            <span class="subject-cmd">/math</span>
+          </div>
+          <div class="subject-row">
+            <span class="subject-name">🇬🇧 English</span>
+            <span class="subject-cmd">/english</span>
+          </div>
+          <div class="subject-row">
+            <span class="subject-name">🎵 Music <span style="font-size:.7rem;color:var(--green);font-weight:700;margin-left:.3rem;">+ MIDI</span></span>
+            <span class="subject-cmd">/music</span>
+          </div>
+          <div class="subject-row" style="opacity:.45;">
+            <span class="subject-name">➕ More coming…</span>
+            <span class="subject-cmd">soon</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top:1.5rem;font-size:.85rem;color:var(--muted);">
+      Each tutor adapts to the child's grade and curriculum. Progress is stored separately so the weekly report shows a clear picture per child per subject. The Music tutor Melody receives live MIDI data from a USB keyboard — she can hear what the kids play and give real-time feedback.
+    </p>
+  </div>
+</section>
+
+<!-- ── Device control ─────────────────────────────────────────────── -->
+<section class="section section--alt">
+  <div class="container">
+    <div class="section-label">Device Control</div>
+    <h2>Any device on the home network.<br><span class="grad">Locked by default.</span></h2>
+    <p class="section-intro">Pi-hole is the DNS server for every controlled device. Each device has its DNS setting pointed at the Pi — either pushed automatically via the router's DHCP, or set manually per device. ClawTutor patches Pi-hole's blocklist per device, per child — no parental-controls app, no platform subscription needed.</p>
+
+    <!-- Device grid -->
+    <div class="device-grid">
+      <div class="device-card device-card--active">
+        <div class="device-icon">📺</div>
+        <div class="device-name">TV / Streaming box</div>
+        <div class="device-detail">Streaming blocked until credits earned. Oliver uses Apple TV — works equally with Fire TV, Chromecast, Android TV, Roku.</div>
+        <div class="device-badge device-badge--on">Active</div>
+      </div>
+      <div class="device-card">
+        <div class="device-icon">📱</div>
+        <div class="device-name">Kids' phones</div>
+        <div class="device-detail">YouTube, TikTok, games — blocked at the DNS level when on home WiFi.</div>
+        <div class="device-badge">WiFi</div>
+      </div>
+      <div class="device-card device-card--active">
+        <div class="device-icon">🎮</div>
+        <div class="device-name">PlayStation</div>
+        <div class="device-detail">PSN, online gaming and the PS Store all go dark until credits are spent.</div>
+        <div class="device-badge device-badge--on">Active</div>
+      </div>
+      <div class="device-card device-card--active">
+        <div class="device-icon">🕹️</div>
+        <div class="device-name">Nintendo Switch</div>
+        <div class="device-detail">eShop and online multiplayer blocked when credits run out. Local play still works — smart plug handles that.</div>
+        <div class="device-badge device-badge--on">Active</div>
+      </div>
+      <div class="device-card">
+        <div class="device-icon">💻</div>
+        <div class="device-name">Laptops / tablets</div>
+        <div class="device-detail">Block specific domains (gaming sites, streaming) while leaving school content open.</div>
+        <div class="device-badge">WiFi &amp; LAN</div>
+      </div>
+      <div class="device-card device-card--note">
+        <div class="device-icon">🔌</div>
+        <div class="device-name">Any networked device</div>
+        <div class="device-detail">WiFi or wired — as long as the device's DNS is pointed at the Pi (manually or via DHCP), Pi-hole controls it. By MAC address, by group, or per device.</div>
+        <div class="device-badge device-badge--muted">DNS → Pi-hole</div>
+      </div>
+    </div>
+
+    <div style="margin-top:1rem;padding:1rem 1.25rem;background:var(--surface2);border-radius:10px;font-size:.85rem;color:var(--muted);">
+      💡 <strong style="color:var(--text);">How it works:</strong>
+      Each controlled device has its DNS server set to the Pi's IP address — either configured manually on the device, or pushed to all devices via the router's DHCP settings. Once DNS points at Pi-hole, ClawTutor can block or unblock it by MAC address via the Pi-hole API. The device itself needs no app or agent.
+    </div>
+
+    <!-- Home automation tier -->
+    <h3 style="margin-top:2.5rem;margin-bottom:.4rem;">Beyond DNS: home automation</h3>
+    <p style="font-size:.9rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.6;">
+      DNS blocking only works for devices that need the internet. Local games, offline content, and cached apps slip through.
+      A smart plug or home automation gateway closes that gap — ClawTutor can simply <strong style="color:var(--text);">cut the power</strong> when credits run out.
+    </p>
+
+    <div class="device-grid">
+      <div class="device-card">
+        <div class="device-icon">🔌</div>
+        <div class="device-name">Smart power plugs</div>
+        <div class="device-detail">Plug a TV, console or monitor into a smart socket. ClawTutor switches it off when credits hit zero — works even for offline and local-multiplayer games.</div>
+        <div class="device-badge">Power control</div>
+      </div>
+      <div class="device-card">
+        <div class="device-icon">🏠</div>
+        <div class="device-name">Home Assistant</div>
+        <div class="device-detail">Full home automation gateway. ClawTutor calls the HA REST API to toggle switches, scenes, or automations — lights, plugs, anything HA controls.</div>
+        <div class="device-badge">API</div>
+      </div>
+      <div class="device-card">
+        <div class="device-icon">💡</div>
+        <div class="device-name">Smart lights</div>
+        <div class="device-detail">Flash the room lights as a 5-minute warning before screen time ends. Subtler than a nagging message — and harder to ignore.</div>
+        <div class="device-badge">Signal</div>
+      </div>
+      <div class="device-card device-card--note">
+        <div class="device-icon">⚡</div>
+        <div class="device-name">Any HTTP-controlled device</div>
+        <div class="device-detail">Shelly, TP-Link Kasa, IKEA Trådfri, Philips Hue, Apple HomeKit (via HA bridge) — if it has a local API, ClawTutor can reach it.</div>
+        <div class="device-badge device-badge--muted">Local API</div>
+      </div>
+    </div>
+
+    <div style="margin-top:1rem;padding:1rem 1.25rem;background:var(--surface2);border-radius:10px;font-size:.85rem;color:var(--muted);">
+      ⚡ <strong style="color:var(--text);">Why power plugs matter:</strong>
+      DNS blocking stops Netflix. A smart plug stops <em>everything</em> — the TV, the console, the monitor.
+      Combined, DNS + power control leaves no workaround for kids. Local games, offline mode, downloaded content — all go dark when time's up.
+    </div>
+
+    <!-- DNS flow -->
+    <h3 style="margin-top:2.5rem;margin-bottom:1rem;font-size:1rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600;">How the credit cycle works</h3>
+    <div class="dns-flow">
+      <div class="dns-step">
+        <div class="step-icon">🌙</div>
+        <div class="step-text">
+          <strong>Default (blocked)</strong><br>
+          <span>All registered devices are on Pi-hole's blocklist. Streaming, gaming and social services return <span class="badge-block">NXDOMAIN</span> — the device simply can't connect.</span>
+        </div>
+      </div>
+      <div class="dns-step">
+        <div class="step-icon">✅</div>
+        <div class="step-text">
+          <strong>Credits earned via quiz</strong><br>
+          <span>Child answers questions correctly → ClawTutor adds <span class="badge-allow">+10 min per question</span> to the credit balance and removes their devices from the blocklist.</span>
+        </div>
+      </div>
+      <div class="dns-step">
+        <div class="step-icon">⏱️</div>
+        <div class="step-text">
+          <strong>Timer runs out</strong><br>
+          <span>A cron job rechecks remaining credits every few minutes. When the balance hits zero, all of that child's devices go back on the blocklist automatically.</span>
+        </div>
+      </div>
+      <div class="dns-step">
+        <div class="step-icon">🌙</div>
+        <div class="step-text">
+          <strong>Bedtime hard cut-off</strong><br>
+          <span>Regardless of remaining credits, all devices are blocked at a fixed time every night. No exceptions, no workarounds.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Weekly report ──────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="section-label">Reports</div>
+    <h2>Sunday morning, inbox zero</h2>
+    <p class="section-intro">Every Sunday ClawTutor sends a plain-language summary to the parent. No dashboard to log into. No app to check. Just a message — same as the kids get, but on your number.</p>
+
+    <div style="margin-top:2rem;">
+      <div class="report-card">
+        <div class="report-header">📊 ClawTutor — Weekly Report · Sun 16 Feb 2026</div>
+
+        <div class="report-section">👦 Child 1</div>
+        <div class="report-line"><span class="rk">Sessions this week</span><span class="rv good">9</span></div>
+        <div class="report-line"><span class="rk">Questions answered</span><span class="rv">63</span></div>
+        <div class="report-line"><span class="rk">Correct answers</span><span class="rv good">54 (86%)</span></div>
+        <div class="report-line"><span class="rk">Screen time earned</span><span class="rv good">4 h 30 min</span></div>
+        <div class="report-line"><span class="rk">Best subject</span><span class="rv">🧮 Maths</span></div>
+
+        <div class="report-section">👧 Child 2</div>
+        <div class="report-line"><span class="rk">Sessions this week</span><span class="rv good">7</span></div>
+        <div class="report-line"><span class="rk">Questions answered</span><span class="rv">49</span></div>
+        <div class="report-line"><span class="rk">Correct answers</span><span class="rv good">40 (82%)</span></div>
+        <div class="report-line"><span class="rk">Screen time earned</span><span class="rv good">3 h 20 min</span></div>
+        <div class="report-line"><span class="rk">Best subject</span><span class="rv">🇬🇧 English</span></div>
+
+        <div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid var(--border);font-size:.78rem;color:var(--muted);">
+          Next report: Sun 23 Feb · Reply HELP for commands
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── What's coming ──────────────────────────────────────────────── -->
+<section class="section section--alt">
+  <div class="container">
+    <div class="section-label">Roadmap</div>
+    <h2>What's coming to <em>this</em> setup</h2>
+    <p class="section-intro">Maths, English, and Music are live. Here's what Oliver is actively planning for the next months.</p>
+
+    <div class="roadmap">
+      <div class="roadmap-item roadmap-item--done">
+        <span class="ri-icon">🎹</span>
+        <span class="ri-text"><strong>Music tutor + MIDI keyboard</strong> — Melody is live. A second Pi reads USB MIDI, sends notes via MQTT, and Melody gives real-time feedback. 1 min practice = 2 min screen time.</span>
+        <span class="ri-done">Done ✓</span>
+      </div>
+      <div class="roadmap-item roadmap-item--done">
+        <span class="ri-icon">🕹️</span>
+        <span class="ri-text"><strong>Gaming consoles under control</strong> — Nintendo Switch &amp; PlayStation added. DNS blocks eShop &amp; online; smart plug covers local play.</span>
+        <span class="ri-done">Done ✓</span>
+      </div>
+      <div class="roadmap-item">
+        <span class="ri-icon">🗺️</span>
+        <span class="ri-text">Geography tutor — capitals, flags, rivers</span>
+        <span class="ri-soon">Next</span>
+      </div>
+      <div class="roadmap-item">
+        <span class="ri-icon">🔬</span>
+        <span class="ri-text">Science tutor — biology, chemistry basics</span>
+        <span class="ri-soon">Planned</span>
+      </div>
+      <div class="roadmap-item">
+        <span class="ri-icon">📖</span>
+        <span class="ri-text">Reading comprehension challenges</span>
+        <span class="ri-soon">Planned</span>
+      </div>
+      <div class="roadmap-item">
+        <span class="ri-icon">🏆</span>
+        <span class="ri-text">Sibling leaderboard — weekly challenge mode</span>
+        <span class="ri-soon">Idea</span>
+      </div>
+      <div class="roadmap-item">
+        <span class="ri-icon">📅</span>
+        <span class="ri-text">School exam prep — timed quizzes before test dates</span>
+        <span class="ri-soon">Idea</span>
+      </div>
+      <div class="roadmap-item">
+        <span class="ri-icon">🧹</span>
+        <span class="ri-text"><strong>Chore credits</strong> — earn screen time by completing household tasks. Empty the dishwasher, brush teeth, clean your room — each chore worth a configurable number of minutes. A parent confirms via WhatsApp to unlock the credits.</span>
+        <span class="ri-soon">Soon</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ────────────────────────────────────────────────────────── -->
+<div class="cta-banner">
+  <div class="container">
+    <h2>Want to build the same?</h2>
+    <p>The full setup guide walks you through every step — from flashing the Pi to the first quiz.</p>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+      <a href="https://github.com/groonvandorp/ClawTutor/blob/main/SETUP.md" target="_blank" class="btn btn--primary">Read the Setup Guide →</a>
+      <a href="index.html" class="btn btn--ghost">← Back to overview</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── Footer ────────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank">GitHub</a>
+      <a href="https://github.com/groonvandorp/ClawTutor/blob/main/SETUP.md" target="_blank">Setup Guide</a>
+      <a href="courses.html">Courses</a>
+      <a href="ecosystem.html">Built on</a>
+      <a href="contact.html">Contact</a>
+      <a href="https://github.com/groonvandorp/ClawTutor/blob/main/LICENSE" target="_blank">License</a>
+      <a href="https://openclaw.ai" target="_blank">OpenClaw</a>
+    </div>
+    <div style="display:flex;justify-content:center;gap:1.25rem;margin-bottom:1rem;">
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank" title="GitHub" style="opacity:.5;transition:opacity .15s;display:flex;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">
+        <img src="https://cdn.simpleicons.org/github/7a7f94" alt="GitHub" width="22" height="22" />
+      </a>
+      <a href="https://instagram.com/clawtutor" target="_blank" title="Instagram @clawtutor" style="opacity:.5;transition:opacity .15s;display:flex;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">
+        <img src="https://cdn.simpleicons.org/instagram/7a7f94" alt="Instagram" width="22" height="22" />
+      </a>
+      <a href="https://www.youtube.com/@ClawTutor" target="_blank" title="YouTube @ClawTutor" style="opacity:.5;transition:opacity .15s;display:flex;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">
+        <img src="https://cdn.simpleicons.org/youtube/7a7f94" alt="YouTube" width="22" height="22" />
+      </a>
+    </div>
+    <p><img src="icon.png" alt="" style="height:22px;width:22px;vertical-align:middle;border-radius:5px;margin-right:.4rem;" />ClawTutor — made with ❤️ by <a href="https://github.com/groonvandorp" target="_blank">Oliver Gruhn-van Dorp</a></p>
+    <p style="margin-top:.4rem;">Free for personal &amp; non-commercial use · <a href="https://github.com/groonvandorp/ClawTutor/blob/main/LICENSE">Commercial use requires permission</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

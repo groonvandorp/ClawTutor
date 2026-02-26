@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meet Melody — Music tutoring with a real MIDI keyboard — ClawTutor Blog</title>
+  <meta name="description" content="ClawTutor now has a Music tutor called Melody. A second Raspberry Pi reads a USB MIDI keyboard, sends notes via MQTT, and Melody gives real-time feedback via WhatsApp." />
+  <link rel="icon" type="image/png" href="../icon.png" />
+  <link rel="apple-touch-icon" href="../icon.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0b0d12;
+      --surface:  #13161e;
+      --surface2: #1b1f2a;
+      --border:   #252938;
+      --accent:   #ff5b35;
+      --accent2:  #ffb03a;
+      --green:    #3ddc84;
+      --blue:     #4fa3e0;
+      --text:     #eef0f6;
+      --muted:    #7a7f94;
+      --radius:   14px;
+      --font:     'Inter', system-ui, -apple-system, sans-serif;
+      --mono:     'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 17px; line-height: 1.75; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: 720px; margin: 0 auto; padding: 0 1.5rem; }
+    .grad { background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    /* ── Nav ─────────────────────────────────────────────────────── */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,13,18,.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: .9rem 0; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    .nav-logo { display: flex; align-items: center; gap: .5rem; font-size: 1.1rem; font-weight: 800; color: var(--text); }
+    .nav-logo:hover { text-decoration: none; opacity: .85; }
+    .nav-links { display: flex; align-items: center; gap: 1.75rem; }
+    .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .nav-links a.active { color: var(--text); }
+
+    /* ── Post header ─────────────────────────────────────────────── */
+    .post-header { padding: 4rem 0 2.5rem; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .breadcrumb { font-size: .85rem; color: var(--muted); margin-bottom: 1.25rem; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--text); }
+
+    .pill {
+      display: inline-flex; align-items: center; gap: .3rem;
+      font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+      border-radius: 999px; padding: .22rem .65rem;
+    }
+    .pill--feature { background: rgba(61,220,132,.15); color: var(--green); }
+    .pill--meta    { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+    .pill--addon   { background: rgba(155,114,244,.15); color: #9b72f4; }
+
+    .post-meta { display: flex; align-items: center; gap: .65rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .post-date { font-size: .85rem; color: var(--muted); }
+
+    h1.post-title { font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 800; line-height: 1.15; letter-spacing: -.03em; }
+    .post-lede { font-size: 1.15rem; color: var(--muted); margin-top: 1rem; line-height: 1.7; }
+
+    .author { display: flex; align-items: center; gap: .75rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+    .author-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .author-name { font-weight: 700; font-size: .9rem; }
+    .author-role { font-size: .78rem; color: var(--muted); }
+
+    /* ── Post body ───────────────────────────────────────────────── */
+    .post-body { padding: 3rem 0 5rem; }
+
+    .post-body h2 { font-size: 1.5rem; font-weight: 700; margin: 2.5rem 0 .75rem; letter-spacing: -.02em; color: var(--text); }
+    .post-body h3 { font-size: 1.1rem; font-weight: 700; margin: 2rem 0 .5rem; color: var(--text); }
+    .post-body p  { margin-bottom: 1.25rem; color: var(--text); }
+    .post-body p:last-child { margin-bottom: 0; }
+    .post-body strong { color: var(--text); font-weight: 700; }
+    .post-body em { color: var(--muted); }
+    .post-body ul, .post-body ol { padding-left: 1.5rem; margin-bottom: 1.25rem; color: var(--text); }
+    .post-body li { margin-bottom: .4rem; }
+    .post-body a { color: var(--accent); }
+    .post-body code { font-family: var(--mono); font-size: .85em; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: .15rem .4rem; }
+    .post-body pre { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; overflow-x: auto; margin: 1.5rem 0; font-size: .85rem; line-height: 1.6; }
+    .post-body pre code { background: none; border: none; padding: 0; }
+    .post-body blockquote { border-left: 3px solid var(--green); margin: 1.5rem 0; padding: .75rem 1.25rem; background: var(--surface); border-radius: 0 8px 8px 0; color: var(--muted); font-style: italic; }
+    .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+    /* ── Callout box ─────────────────────────────────────────────── */
+    .callout { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; margin: 1.5rem 0; font-size: .9rem; line-height: 1.6; color: var(--muted); }
+    .callout strong { color: var(--text); }
+
+    /* ── Diagram ─────────────────────────────────────────────────── */
+    .arch-diagram { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; margin: 1.5rem 0; font-family: var(--mono); font-size: .8rem; line-height: 1.7; overflow-x: auto; white-space: pre; color: var(--muted); }
+
+    /* ── Reward table ────────────────────────────────────────────── */
+    .reward-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    .reward-table th, .reward-table td { text-align: left; padding: .6rem .9rem; border-bottom: 1px solid var(--border); font-size: .9rem; }
+    .reward-table th { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+    .reward-table td:last-child { font-weight: 700; color: var(--green); }
+
+    /* ── Chat mockup ─────────────────────────────────────────────── */
+    .chat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin: 1.5rem 0; }
+    .chat-bubble { max-width: 85%; padding: .65rem 1rem; border-radius: 12px; margin-bottom: .6rem; font-size: .9rem; line-height: 1.5; }
+    .chat-bubble:last-child { margin-bottom: 0; }
+    .chat-kid { background: var(--surface2); border: 1px solid var(--border); margin-right: auto; }
+    .chat-melody { background: rgba(255,91,53,.08); border: 1px solid rgba(255,91,53,.2); margin-left: auto; }
+    .chat-sender { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: .25rem; }
+    .chat-sender--kid { color: var(--blue); }
+    .chat-sender--melody { color: var(--accent); }
+
+    /* ── Post nav ────────────────────────────────────────────────── */
+    .post-nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 0; border-top: 1px solid var(--border); margin-top: 1rem; flex-wrap: wrap; gap: 1rem; }
+    .post-nav a { display: inline-flex; align-items: center; gap: .4rem; font-size: .85rem; font-weight: 600; color: var(--muted); }
+    .post-nav a:hover { color: var(--text); text-decoration: none; }
+
+    /* ── Footer ──────────────────────────────────────────────────── */
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 2.5rem 0; text-align: center; }
+    footer p { color: var(--muted); font-size: .85rem; margin-top: .4rem; }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-bottom: 1.5rem; }
+    .footer-links a { font-size: .85rem; }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ──────────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <img src="../icon.png" alt="" style="height:32px;width:32px;border-radius:7px;" />
+      <span>ClawTutor</span>
+    </a>
+    <div class="nav-links">
+      <a href="../index.html#how-it-works">How it works</a>
+      <a href="../index.html#features">Features</a>
+      <a href="../courses.html">Courses</a>
+      <a href="../olivers-setup.html">Real setup</a>
+      <a href="../ecosystem.html">Built on</a>
+      <a href="../blog.html" class="active">Blog</a>
+      <a href="../contact.html">Contact</a>
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Post header ────────────────────────────────────────────────── -->
+<div class="post-header">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="../index.html">ClawTutor</a>
+      <span>/</span>
+      <a href="../blog.html">Blog</a>
+      <span>/</span>
+      <span>Meet Melody</span>
+    </div>
+
+    <div class="post-meta">
+      <span class="post-date">22 February 2026</span>
+      <span class="pill pill--feature">Feature</span>
+      <span class="pill pill--addon">Addon</span>
+    </div>
+
+    <h1 class="post-title">Meet Melody —<br><span class="grad">music tutoring with a real keyboard</span></h1>
+    <p class="post-lede">ClawTutor's third subject is live. A second Raspberry Pi reads a USB MIDI keyboard, sends notes via MQTT, and an AI tutor named Melody gives real-time feedback — all through WhatsApp.</p>
+
+    <div class="author">
+      <div class="author-avatar">👨‍💻</div>
+      <div>
+        <div class="author-name">Oliver Gruhn-van Dorp</div>
+        <div class="author-role">Creator of ClawTutor</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Post body ──────────────────────────────────────────────────── -->
+<div class="post-body">
+  <div class="container">
+
+    <h2>Beyond text quizzes</h2>
+
+    <p>Maths and English work beautifully as text-based tutors. The kid types an answer, the tutor checks it, screen time is earned. Simple loop, clean feedback.</p>
+
+    <p>Music is different. You can't tutor someone on the piano through text alone. You need to <em>hear</em> what they're playing — or at least see the notes. That's where the MIDI interface comes in.</p>
+
+    <h2>The setup: two Pis, one keyboard</h2>
+
+    <p>The idea is straightforward: plug a USB MIDI keyboard into a second Raspberry Pi (a 3B+ is more than enough), run a Python script that reads the MIDI data, and send it to the ClawTutor Pi via MQTT. Melody — the Music tutor agent — picks it up and knows exactly what's being played.</p>
+
+    <div class="arch-diagram">┌─────────────────────┐     ┌─────────────────────┐
+│     Musik-Pi        │     │    ClawTutor-Pi     │
+│                     │     │                     │
+│  ┌───────────────┐  │     │  ┌───────────────┐  │
+│  │   Keyboard    │  │     │  │   Mosquitto   │  │
+│  │   (USB MIDI)  │  │     │  │ (MQTT Broker) │  │
+│  └───────┬───────┘  │     │  └───────┬───────┘  │
+│          │          │     │          │          │
+│  ┌───────▼───────┐  │     │  ┌───────▼───────┐  │
+│  │  midi_sender  │──┼─────┼──│music_receiver │  │
+│  │    (Python)   │  │ MQTT│  │   (Python)    │  │
+│  └───────────────┘  │     │  └───────┬───────┘  │
+│                     │     │          │          │
+└─────────────────────┘     │  ┌───────▼───────┐  │
+                            │  │ Melody Agent  │  │
+                            │  │  (OpenClaw)   │  │
+                            │  └───────────────┘  │
+                            └─────────────────────┘</div>
+
+    <p>The <code>midi_sender.py</code> runs on the Musik-Pi as a systemd service. It auto-detects USB MIDI devices — Korg, Yamaha, Roland, whatever you plug in. Every note press, every release, every velocity value gets published to MQTT topics on the ClawTutor Pi.</p>
+
+    <p>On the other end, <code>music_receiver.py</code> listens, aggregates the data into practice sessions, calculates how long the kid played, evaluates rhythm consistency, and feeds everything to the Melody agent inside OpenClaw.</p>
+
+    <h2>What Melody actually does</h2>
+
+    <p>Melody is a full tutor agent with her own personality, curriculum, and progress tracking — just like Matteo (Maths) and Nelly (English). But she has something the others don't: live instrument data.</p>
+
+    <p>She can see:</p>
+
+    <ul>
+      <li>🎹 Which notes were played and in what order</li>
+      <li>⏱️ How long the practice session lasted</li>
+      <li>🥁 Rhythm score — how evenly and consistently the child played</li>
+      <li>📈 Progress over days and weeks</li>
+    </ul>
+
+    <p>Here's what a typical Melody interaction looks like:</p>
+
+    <div class="chat">
+      <div class="chat-bubble chat-kid">
+        <div class="chat-sender chat-sender--kid">Kid</div>
+        I practised for 10 minutes!
+      </div>
+      <div class="chat-bubble chat-melody">
+        <div class="chat-sender chat-sender--melody">Melody 🎹</div>
+        Wow, 10 minutes — awesome! 🎵 I saw 47 notes and your rhythm scored 72/100 — getting better! You earned <strong>20 minutes</strong> of screen time. Keep the streak going and you'll get a bonus tomorrow! 🎶
+      </div>
+    </div>
+
+    <p>She can also quiz on music theory — note names, intervals, chord types, composer trivia — the same way Matteo quizzes on fractions. Text-based quizzes for theory, MIDI data for practice. Both earn screen time.</p>
+
+    <h2>Screen time for practice</h2>
+
+    <p>The reward system for Music is slightly different from the quiz-based subjects. Instead of per-answer credits, it's time-based:</p>
+
+    <table class="reward-table">
+      <thead>
+        <tr><th>Action</th><th>Reward</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1 minute of practice</td><td>+2 min screen time</td></tr>
+        <tr><td>Rhythm score ≥ 75/100</td><td>+25% bonus</td></tr>
+        <tr><td>3+ day streak</td><td>+20% bonus</td></tr>
+        <tr><td>Theory quiz (correct answer)</td><td>+10 min</td></tr>
+      </tbody>
+    </table>
+
+    <p>The bonuses stack. A kid who practices 10 minutes with good rhythm on a 3-day streak earns <strong>30 minutes</strong> of screen time (20 base + 25% rhythm + 20% streak). That's a strong incentive to keep showing up at the keyboard.</p>
+
+    <h2>Hardware: what you need</h2>
+
+    <p>The Musik-Pi is intentionally cheap and simple:</p>
+
+    <ul>
+      <li>🍓 <strong>Raspberry Pi 3B+</strong> or newer — doesn't need to be fast</li>
+      <li>🎹 <strong>Any USB MIDI keyboard</strong> — Korg, Yamaha, Roland, Arturia, whatever you have</li>
+      <li>🔌 Power supply (2.5A minimum)</li>
+      <li>📶 WiFi connection to your home network</li>
+    </ul>
+
+    <p>Total cost if you don't already have a Pi: about €40–50. If you already have one lying around from another project, it's essentially free.</p>
+
+    <div class="callout">
+      💡 <strong>No monitor needed.</strong> The Musik-Pi runs headless. Plug in the keyboard, power it up, and it auto-starts the MIDI sender via systemd. The kid just sits down and plays — Melody picks it up through WhatsApp.
+    </div>
+
+    <h2>MQTT under the hood</h2>
+
+    <p>The communication uses three MQTT topics:</p>
+
+    <ul>
+      <li><code>clawtutor/music/notes</code> — live note-on/note-off events</li>
+      <li><code>clawtutor/music/session</code> — end-of-session summary (duration, note count, rhythm score)</li>
+      <li><code>clawtutor/music/control</code> — control commands (start/stop/reset)</li>
+    </ul>
+
+    <p>Mosquitto runs on the ClawTutor Pi as the MQTT broker. It's lightweight, stable, and needs zero maintenance once installed. The Musik-Pi connects over WiFi — no cables between the two Pis.</p>
+
+    <h2>Why a second Pi?</h2>
+
+    <p>USB MIDI needs a host device. The keyboard plugs into a USB port, and something has to read that data in real time. I could have connected the keyboard directly to the ClawTutor Pi, but I wanted the keyboard to be in the kids' room — and the ClawTutor Pi lives in the server closet. MQTT over WiFi solves that cleanly.</p>
+
+    <p>It also keeps the addon modular. If you don't want Music, you don't need the second Pi. If you do, you just add it — no changes to the main ClawTutor installation.</p>
+
+    <h2>What's next for Melody</h2>
+
+    <p>Right now, Melody tracks notes and rhythm. Future plans include:</p>
+
+    <ul>
+      <li>🎼 Specific exercises ("play C major scale ascending") with automatic grading</li>
+      <li>🎵 Song recognition — detect when the child is playing a known piece</li>
+      <li>📊 Visual progress charts in the weekly report</li>
+      <li>🎤 Voice integration — singing along to keyboard accompaniment</li>
+    </ul>
+
+    <p>The full addon documentation is on GitHub: <a href="https://github.com/groonvandorp/ClawTutor/tree/main/addons/midi-interface" target="_blank">addons/midi-interface</a>. And you can see how it fits into the overall setup on the <a href="../olivers-setup.html">Oliver's Setup</a> page.</p>
+
+    <hr />
+
+    <p><em>— Oliver, Feb 2026</em></p>
+
+    <!-- ── Post nav ─────────────────────────────────────────────── -->
+    <div class="post-nav">
+      <a href="../blog.html">← All posts</a>
+      <a href="2026-02-21-gaming-consoles.html">← Previous: Gaming consoles under control</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Footer ────────────────────────────────────────────────────── -->
+<footer>
+  <div class="container" style="max-width:1100px;">
+    <div class="footer-links">
+      <a href="../index.html">Home</a>
+      <a href="../courses.html">Courses</a>
+      <a href="../olivers-setup.html">Real setup</a>
+      <a href="../ecosystem.html">Built on</a>
+      <a href="../blog.html">Blog</a>
+      <a href="../contact.html">Contact</a>
+      <a href="https://github.com/groonvandorp/ClawTutor/blob/main/LICENSE" target="_blank">License</a>
+    </div>
+    <div style="display:flex;justify-content:center;gap:1.25rem;margin-bottom:1rem;">
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank" title="GitHub" style="opacity:.5;transition:opacity .15s;display:flex;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">
+        <img src="https://cdn.simpleicons.org/github/7a7f94" alt="GitHub" width="22" height="22" />
+      </a>
+      <a href="https://instagram.com/clawtutor" target="_blank" title="Instagram @clawtutor" style="opacity:.5;transition:opacity .15s;display:flex;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">
+        <img src="https://cdn.simpleicons.org/instagram/7a7f94" alt="Instagram" width="22" height="22" />
+      </a>
+      <a href="https://www.youtube.com/@ClawTutor" target="_blank" title="YouTube @ClawTutor" style="opacity:.5;transition:opacity .15s;display:flex;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">
+        <img src="https://cdn.simpleicons.org/youtube/7a7f94" alt="YouTube" width="22" height="22" />
+      </a>
+    </div>
+    <p><img src="../icon.png" alt="" style="height:22px;width:22px;vertical-align:middle;border-radius:5px;margin-right:.4rem;" />ClawTutor — made with ❤️ by <a href="https://github.com/groonvandorp" target="_blank">Oliver Gruhn-van Dorp</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
