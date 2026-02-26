@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voice Announcements — "Time for your quiz!" via Bluetooth Speaker — ClawTutor Blog</title>
+  <meta name="description" content="ClawTutor can now speak! Connect a Bluetooth speaker to your Pi and get voice announcements for quiz reminders, screen time warnings, and more." />
+  <link rel="icon" type="image/png" href="../assets/icon.png" />
+  <link rel="apple-touch-icon" href="../assets/icon.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0b0d12;
+      --surface:  #13161e;
+      --surface2: #1b1f2a;
+      --border:   #252938;
+      --accent:   #ff5b35;
+      --accent2:  #ffb03a;
+      --green:    #3ddc84;
+      --blue:     #4fa3e0;
+      --purple:   #9b72f4;
+      --text:     #eef0f6;
+      --muted:    #7a7f94;
+      --radius:   14px;
+      --font:     'Inter', system-ui, -apple-system, sans-serif;
+      --mono:     'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 17px; line-height: 1.75; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: 720px; margin: 0 auto; padding: 0 1.5rem; }
+    .grad { background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,13,18,.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: .9rem 0; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    .nav-logo { display: flex; align-items: center; gap: .5rem; font-size: 1.1rem; font-weight: 800; color: var(--text); }
+    .nav-logo:hover { text-decoration: none; opacity: .85; }
+    .nav-links { display: flex; align-items: center; gap: 1.75rem; }
+    .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    .post-header { padding: 4rem 0 2.5rem; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .breadcrumb { font-size: .85rem; color: var(--muted); margin-bottom: 1.25rem; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--text); }
+
+    .pill { display: inline-flex; align-items: center; gap: .3rem; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; border-radius: 999px; padding: .22rem .65rem; }
+    .pill--addon { background: rgba(155,114,244,.15); color: var(--purple); }
+    .pill--meta { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+
+    h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); font-weight: 800; line-height: 1.2; letter-spacing: -.03em; margin-top: 1rem; }
+    .post-meta { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.25rem; }
+
+    .post-body { padding: 3rem 0 4rem; }
+    .post-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2.5rem 0 1rem; }
+    .post-body h3 { font-size: 1.15rem; font-weight: 700; margin: 2rem 0 .75rem; }
+    .post-body p { margin-bottom: 1.25rem; }
+    .post-body ul, .post-body ol { padding-left: 1.4rem; margin-bottom: 1.25rem; }
+    .post-body li { margin-bottom: .4rem; }
+    .post-body pre { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; overflow-x: auto; font-family: var(--mono); font-size: .85rem; line-height: 1.6; margin: 1.5rem 0; }
+    .post-body code { font-family: var(--mono); font-size: .88em; background: var(--surface2); border-radius: 4px; padding: .15rem .35rem; }
+    .post-body pre code { background: none; padding: 0; }
+    .post-body blockquote { border-left: 3px solid var(--accent); padding-left: 1rem; margin: 1.5rem 0; color: var(--muted); font-style: italic; }
+    .post-body img { max-width: 100%; border-radius: var(--radius); margin: 1.5rem 0; }
+
+    .callout { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin: 2rem 0; }
+    .callout-title { font-weight: 700; margin-bottom: .5rem; display: flex; align-items: center; gap: .5rem; }
+    .callout p:last-child { margin-bottom: 0; }
+
+    .back-link { display: inline-flex; align-items: center; gap: .4rem; font-size: .9rem; font-weight: 600; color: var(--muted); margin-top: 2rem; }
+    .back-link:hover { color: var(--text); text-decoration: none; }
+
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 3rem 0; margin-top: 2rem; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2rem; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+    .footer-links a { color: var(--muted); font-size: .9rem; }
+    .footer-links a:hover { color: var(--text); text-decoration: none; }
+    .footer-bottom { width: 100%; text-align: center; padding-top: 2rem; border-top: 1px solid var(--border); margin-top: 1rem; }
+    .footer-bottom p { color: var(--muted); font-size: .85rem; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo"><img src="../assets/icon.png" alt="" style="height:32px;width:32px;border-radius:7px;" /><span>ClawTutor</span></a>
+    <div class="nav-links">
+      <a href="../index.html#features">Features</a>
+      <a href="../courses.html">Courses</a>
+      <a href="../blog.html" class="active">Blog</a>
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<div class="post-header">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="../index.html">ClawTutor</a>
+      <span style="color:var(--border);">/</span>
+      <a href="../blog.html">Blog</a>
+      <span style="color:var(--border);">/</span>
+      <span>Voice Announcements</span>
+    </div>
+    <h1>"Max, Zeit fürs Quiz!" — <span class="grad">Voice Announcements</span></h1>
+    <div class="post-meta">
+      <span class="pill pill--addon">Add-on</span>
+      <span class="pill pill--meta">26 Feb 2026</span>
+      <span class="pill pill--meta">3 min read</span>
+    </div>
+  </div>
+</div>
+
+<article class="post-body">
+  <div class="container">
+
+    <p>WhatsApp notifications are easy to ignore. You know the drill — the phone buzzes, the kid glances at it, and goes right back to whatever they were doing. "I didn't see it" is the eternal excuse.</p>
+
+    <p>But a voice booming through the room? That's harder to miss.</p>
+
+    <h2>The Setup</h2>
+
+    <p>ClawTutor can now speak through a Bluetooth speaker connected to the Raspberry Pi. The setup is surprisingly simple:</p>
+
+    <ol>
+      <li>Pair a Bluetooth speaker with the Pi</li>
+      <li>Install Google TTS (<code>pip install gtts</code>)</li>
+      <li>Run the announce script</li>
+    </ol>
+
+    <pre><code>./scripts/announce.sh "Max, Zeit fürs Mathe-Quiz!"</code></pre>
+
+    <p>That's it. The Pi generates speech via Google's text-to-speech API and plays it through the Bluetooth speaker.</p>
+
+    <h2>Use Cases</h2>
+
+    <h3>🔔 Quiz Reminders</h3>
+    <p>Schedule a daily announcement at 4 PM: "Time for your math quiz!" Much more effective than a silent notification.</p>
+
+    <h3>⏰ Screen Time Warnings</h3>
+    <p>"5 minutes of TV time remaining!" — gives kids a chance to wrap up instead of an abrupt cutoff.</p>
+
+    <h3>🎉 Celebrations</h3>
+    <p>"Congratulations! You've completed a 7-day streak!" — positive reinforcement hits different when it's spoken aloud.</p>
+
+    <h3>📢 General Announcements</h3>
+    <p>"Dinner is ready!" — okay, that's not tutoring-related, but once you have voice announcements, you'll find uses for them.</p>
+
+    <h2>The Limitation</h2>
+
+    <p>There's one obvious constraint: <strong>the speaker must be in Bluetooth range of the Pi</strong> (~10 meters). This works great if:</p>
+
+    <ul>
+      <li>The Pi is in a central location (living room, hallway)</li>
+      <li>You use a portable speaker that moves with the family</li>
+      <li>Kids do their homework near the Pi anyway</li>
+    </ul>
+
+    <p>For multi-room announcements, you'd need either multiple Pis or a different approach entirely (like network speakers or — if Apple ever opens up — AirPlay).</p>
+
+    <div class="callout">
+      <div class="callout-title">💡 Why not HomePods?</div>
+      <p>Apple's HomePods would be perfect for this — they're already in every room. But Apple keeps AirPlay 2 locked down tight. There's no official way to send arbitrary audio from a Linux device to a HomePod. Matter doesn't help either; it's for smart home control, not audio streaming.</p>
+      <p>The Bluetooth speaker is the pragmatic solution that actually works.</p>
+    </div>
+
+    <h2>Voice Quality</h2>
+
+    <p>Google TTS is... fine. It's clearly robotic, but perfectly understandable. For announcements, you don't need a Hollywood voice actor — you need clarity.</p>
+
+    <p>If you want better voices, the script can be adapted for:</p>
+    <ul>
+      <li><strong>ElevenLabs</strong> — realistic voices, paid API</li>
+      <li><strong>OpenAI TTS</strong> — good quality, paid API</li>
+      <li><strong>Piper</strong> — runs locally, free, but requires more setup</li>
+    </ul>
+
+    <h2>Installation</h2>
+
+    <p>The full addon with setup instructions is on GitHub: <a href="https://github.com/groonvandorp/ClawTutor/tree/main/addons/voice-announcements" target="_blank">addons/voice-announcements</a>.</p>
+
+    <p>Pairing the speaker is the only tricky part, and even that's just a few <code>bluetoothctl</code> commands. Once paired, the speaker auto-connects when the Pi boots.</p>
+
+    <h2>What's Next</h2>
+
+    <p>I'm considering adding voice output directly to the tutor agents — imagine Matteo actually <em>speaking</em> the quiz questions. That would require some thought about UX (do kids want a voice in their ear while doing homework?) but it's technically possible.</p>
+
+    <p>For now, announcements are the sweet spot: low-friction, high-impact, and genuinely useful.</p>
+
+    <a href="../blog.html" class="back-link">← Back to Blog</a>
+
+  </div>
+</article>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-links">
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank">GitHub</a>
+      <a href="https://github.com/groonvandorp/ClawTutor/blob/main/LICENSE" target="_blank">License</a>
+    </div>
+    <a href="https://github.com/groonvandorp/ClawTutor" target="_blank" title="GitHub" style="opacity:.5;transition:opacity .15s;display:flex;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">
+      <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.333-1.754-1.333-1.754-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.806 1.304 3.49.997.108-.776.42-1.305.763-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.468-2.38 1.235-3.22-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.3 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.29-1.552 3.296-1.23 3.296-1.23.653 1.652.242 2.873.118 3.176.77.84 1.233 1.91 1.233 3.22 0 4.61-2.805 5.625-5.475 5.92.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z"/></svg>
+    </a>
+  </div>
+  <div class="footer-bottom">
+    <p><img src="../assets/icon.png" alt="" style="height:22px;width:22px;vertical-align:middle;border-radius:5px;margin-right:.4rem;" />ClawTutor — made with ❤️ by <a href="https://github.com/groonvandorp" target="_blank">Oliver Gruhn-van Dorp</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
