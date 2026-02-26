@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ClawTutor Blog</title>
+    <description>Dev log and updates from ClawTutor — AI tutors that quiz your kids via WhatsApp and reward correct answers with screen time credits.</description>
+    <link>https://clawtutor.ai/blog.html</link>
+    <atom:link href="https://clawtutor.ai/feed.xml" rel="self" type="application/rss+xml"/>
+    <language>en</language>
+    <lastBuildDate>Wed, 26 Feb 2026 17:58:00 +0100</lastBuildDate>
+    <image>
+      <url>https://clawtutor.ai/assets/icon.png</url>
+      <title>ClawTutor Blog</title>
+      <link>https://clawtutor.ai/blog.html</link>
+    </image>
+
+    <item>
+      <title>First Community Contribution — A Security Fix 🎉</title>
+      <link>https://clawtutor.ai/blog/2026-02-26-first-pr.html</link>
+      <guid>https://clawtutor.ai/blog/2026-02-26-first-pr.html</guid>
+      <pubDate>Wed, 26 Feb 2026 17:56:00 +0100</pubDate>
+      <description>Five days after launch, @spnmlr found and fixed a shell injection vulnerability in the device control script. This is exactly what open source is for.</description>
+    </item>
+
+    <item>
+      <title>Dictation Mode — Learning Languages with Voice Messages</title>
+      <link>https://clawtutor.ai/blog/2026-02-26-dictation-mode.html</link>
+      <guid>https://clawtutor.ai/blog/2026-02-26-dictation-mode.html</guid>
+      <pubDate>Wed, 26 Feb 2026 17:36:00 +0100</pubDate>
+      <description>ClawTutor's English tutor Nelly can now send voice messages for dictation exercises and vocabulary practice. Real listening comprehension, real spelling practice — no cheating possible.</description>
+    </item>
+
+    <item>
+      <title>"Max, Zeit fürs Quiz!" — Voice Announcements via Bluetooth</title>
+      <link>https://clawtutor.ai/blog/2026-02-26-voice-announcements.html</link>
+      <guid>https://clawtutor.ai/blog/2026-02-26-voice-announcements.html</guid>
+      <pubDate>Wed, 26 Feb 2026 11:39:00 +0100</pubDate>
+      <description>WhatsApp notifications are easy to ignore. A voice from a Bluetooth speaker? Not so much. ClawTutor can now speak quiz reminders, screen time warnings, and more.</description>
+    </item>
+
+    <item>
+      <title>Teaching How They Learn — VARK Learning Types</title>
+      <link>https://clawtutor.ai/blog/2026-02-26-learning-types.html</link>
+      <guid>https://clawtutor.ai/blog/2026-02-26-learning-types.html</guid>
+      <pubDate>Wed, 26 Feb 2026 10:30:00 +0100</pubDate>
+      <description>Not every kid learns the same way. ClawTutor now detects each child's learning style and adapts its teaching approach — visual, auditory, read/write, or kinesthetic.</description>
+    </item>
+
+    <item>
+      <title>Meet Melody — Music Tutoring with a Real MIDI Keyboard</title>
+      <link>https://clawtutor.ai/blog/2026-02-22-melody-midi.html</link>
+      <guid>https://clawtutor.ai/blog/2026-02-22-melody-midi.html</guid>
+      <pubDate>Sat, 22 Feb 2026 14:00:00 +0100</pubDate>
+      <description>ClawTutor's third subject is live. A second Raspberry Pi reads a USB MIDI keyboard, sends notes via MQTT, and an AI tutor named Melody gives real-time feedback via WhatsApp.</description>
+    </item>
+
+    <item>
+      <title>Gaming Consoles Are Now Under Control</title>
+      <link>https://clawtutor.ai/blog/2026-02-21-gaming-consoles.html</link>
+      <guid>https://clawtutor.ai/blog/2026-02-21-gaming-consoles.html</guid>
+      <pubDate>Fri, 21 Feb 2026 16:00:00 +0100</pubDate>
+      <description>Nintendo Switch and PlayStation are now fully wired into ClawTutor. DNS blocking covers online play — and a smart plug closes the local-game loophole.</description>
+    </item>
+
+    <item>
+      <title>Why I Built ClawTutor — And Why I'm Open-Sourcing It</title>
+      <link>https://clawtutor.ai/blog/2026-02-21-launching-clawtutor.html</link>
+      <guid>https://clawtutor.ai/blog/2026-02-21-launching-clawtutor.html</guid>
+      <pubDate>Fri, 21 Feb 2026 12:00:00 +0100</pubDate>
+      <description>It started with a simple, daily argument. My kids wanted screen time; I wanted them to study first. After one too many negotiations I decided to outsource the whole thing to an AI tutor.</description>
+    </item>
+
+  </channel>
+</rss>
