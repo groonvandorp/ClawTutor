@@ -26,6 +26,25 @@
     .nav-logo { display: flex; align-items: center; gap: .5rem; font-size: 1.1rem; font-weight: 800; color: var(--text); } .nav-logo:hover { text-decoration: none; }
     .nav-links { display: flex; align-items: center; gap: 1.75rem; }
     .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 500; } .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    /* ── Mobile Nav ──────────────────────────────────────────── */
+    .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: .5rem; }
+    .nav-toggle svg { width: 24px; height: 24px; color: var(--text); }
+    
+    @media (max-width: 768px) {
+      .nav-toggle { display: block; }
+      .nav-links {
+        display: none;
+        position: absolute; top: 100%; left: 0; right: 0;
+        flex-direction: column; gap: 0;
+        background: var(--surface); border-bottom: 1px solid var(--border);
+        padding: 1rem 1.5rem;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: .75rem 0; width: 100%; border-bottom: 1px solid var(--border); }
+      .nav-links a:last-child { border-bottom: none; }
+      nav .nav-inner { position: relative; }
+    }
     .hero { padding: 4rem 0 3rem; border-bottom: 1px solid var(--border); background: var(--surface); }
     .breadcrumb { font-size: .85rem; color: var(--muted); margin-bottom: 1rem; } .breadcrumb a { color: var(--muted); }
     h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; line-height: 1.15; letter-spacing: -.03em; }
@@ -56,6 +75,7 @@
 <nav>
   <div class="nav-inner">
     <a href="../index.html" class="nav-logo"><img src="../assets/icon.png" alt="" style="height:32px;width:32px;border-radius:7px;" /><span>ClawTutor</span></a>
+    <button class="nav-toggle" aria-label="Menu" onclick="document.querySelector('.nav-links').classList.toggle('open')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button>
     <div class="nav-links">
       <a href="../index.html#features">Features</a>
       <a href="../courses.html">Courses</a>
