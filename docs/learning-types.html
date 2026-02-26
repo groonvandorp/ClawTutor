@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learning Types — ClawTutor</title>
+  <meta name="description" content="ClawTutor adapts to each child's learning style using the VARK model — Visual, Auditory, Read/Write, or Kinesthetic." />
+  <link rel="icon" type="image/png" href="icon.png" />
+  <link rel="apple-touch-icon" href="icon.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0b0d12;
+      --surface:  #13161e;
+      --surface2: #1b1f2a;
+      --border:   #252938;
+      --accent:   #ff5b35;
+      --accent2:  #ffb03a;
+      --green:    #3ddc84;
+      --blue:     #4fa3e0;
+      --purple:   #9b72f4;
+      --text:     #eef0f6;
+      --muted:    #7a7f94;
+      --radius:   14px;
+      --font:     'Inter', system-ui, -apple-system, sans-serif;
+      --mono:     'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; }
+    h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: -.02em; margin-bottom: 1rem; }
+    h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: .5rem; }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    .grad { background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,13,18,.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: .9rem 0; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    .nav-logo { display: flex; align-items: center; gap: .5rem; font-size: 1.1rem; font-weight: 800; color: var(--text); }
+    .nav-logo:hover { text-decoration: none; opacity: .85; }
+    .nav-links { display: flex; align-items: center; gap: 1.75rem; }
+    .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .nav-links a.active { color: var(--text); }
+
+    .hero { padding: 5rem 0; text-align: center; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%); }
+    .hero p { font-size: 1.15rem; color: var(--muted); max-width: 600px; margin: 1.5rem auto 0; }
+
+    .section { padding: 5rem 0; }
+    .section--alt { background: var(--surface); }
+
+    .types-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+    
+    .type-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; transition: border-color .2s, transform .2s; }
+    .type-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .type-card .emoji { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+    .type-card h3 { color: var(--text); margin-bottom: .75rem; }
+    .type-card p { color: var(--muted); font-size: .95rem; margin-bottom: 1rem; }
+    .type-card ul { color: var(--muted); font-size: .9rem; padding-left: 1.25rem; }
+    .type-card li { margin-bottom: .35rem; }
+    .type-card--visual { border-top: 3px solid var(--purple); }
+    .type-card--auditory { border-top: 3px solid var(--blue); }
+    .type-card--readwrite { border-top: 3px solid var(--green); }
+    .type-card--kinesthetic { border-top: 3px solid var(--accent); }
+
+    .flow-section { max-width: 720px; margin: 0 auto; }
+    .flow-step { display: flex; gap: 1.5rem; margin-bottom: 2rem; align-items: flex-start; }
+    .flow-number { width: 40px; height: 40px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; flex-shrink: 0; }
+    .flow-content h3 { margin-bottom: .5rem; }
+    .flow-content p { color: var(--muted); }
+
+    .example-box { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin: 2rem 0; font-family: var(--mono); font-size: .9rem; line-height: 1.7; }
+    .example-box .label { color: var(--accent); font-weight: 700; display: block; margin-bottom: .5rem; font-family: var(--font); }
+
+    .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+    .comparison-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; }
+    .comparison-card h4 { font-size: 1rem; margin-bottom: .75rem; display: flex; align-items: center; gap: .5rem; }
+    .comparison-card p { color: var(--muted); font-size: .9rem; }
+
+    @media (max-width: 640px) {
+      .comparison { grid-template-columns: 1fr; }
+      .flow-step { flex-direction: column; gap: 1rem; }
+    }
+
+    .cta { text-align: center; padding: 4rem 0; }
+    .cta-btn { display: inline-block; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: var(--bg); font-weight: 700; padding: .9rem 2rem; border-radius: 999px; font-size: 1rem; transition: transform .15s, box-shadow .15s; }
+    .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,91,53,.25); text-decoration: none; }
+
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 2.5rem 0; text-align: center; }
+    footer p { color: var(--muted); font-size: .85rem; margin-top: .4rem; }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-bottom: 1.5rem; }
+    .footer-links a { font-size: .85rem; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="icon.png" alt="" style="height:32px;width:32px;border-radius:7px;" />
+      <span>ClawTutor</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#how-it-works">How it works</a>
+      <a href="index.html#features">Features</a>
+      <a href="courses.html">Courses</a>
+      <a href="olivers-setup.html">Real setup</a>
+      <a href="ecosystem.html">Built on</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html">Contact</a>
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="container">
+    <h1>Adaptive <span class="grad">Learning Types</span></h1>
+    <p>Every child learns differently. ClawTutor detects their style and adapts — automatically.</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <h2 style="text-align:center;">The VARK Model</h2>
+    <p style="text-align:center;color:var(--muted);max-width:600px;margin:0 auto 2rem;">Four learning styles, four different ways to explain the same concept.</p>
+
+    <div class="types-grid">
+      <div class="type-card type-card--visual">
+        <span class="emoji">🖼️</span>
+        <h3>Visual</h3>
+        <p>Learns through images, diagrams, and spatial understanding.</p>
+        <ul>
+          <li>ASCII diagrams and number lines</li>
+          <li>"Picture this..." explanations</li>
+          <li>Structured layouts with clear sections</li>
+          <li>Mind maps and flowcharts</li>
+        </ul>
+      </div>
+
+      <div class="type-card type-card--auditory">
+        <span class="emoji">💬</span>
+        <h3>Auditory</h3>
+        <p>Learns through listening, discussing, and explaining out loud.</p>
+        <ul>
+          <li>"Explain it back to me" prompts</li>
+          <li>Concepts rephrased multiple ways</li>
+          <li>Encourages talking through problems</li>
+          <li>More questions, fewer statements</li>
+        </ul>
+      </div>
+
+      <div class="type-card type-card--readwrite">
+        <span class="emoji">📝</span>
+        <h3>Read/Write</h3>
+        <p>Learns through reading text, lists, and written instructions.</p>
+        <ul>
+          <li>Clear definitions first</li>
+          <li>Bullet-point summaries</li>
+          <li>Step-by-step written guides</li>
+          <li>Encourages note-taking</li>
+        </ul>
+      </div>
+
+      <div class="type-card type-card--kinesthetic">
+        <span class="emoji">🛠️</span>
+        <h3>Kinesthetic</h3>
+        <p>Learns through doing, examples, and real-world application.</p>
+        <ul>
+          <li>Starts with real scenarios</li>
+          <li>"Imagine you're at the store..."</li>
+          <li>Trial and error encouraged</li>
+          <li>Lots of practice problems</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="container flow-section">
+    <h2 style="text-align:center;margin-bottom:2rem;">How It Works</h2>
+
+    <div class="flow-step">
+      <div class="flow-number">1</div>
+      <div class="flow-content">
+        <h3>Quick Onboarding</h3>
+        <p>On first contact, the tutor asks 4 simple, playful questions. No formal test — just conversation.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number">2</div>
+      <div class="flow-content">
+        <h3>Profile Created</h3>
+        <p>The answers determine primary and secondary learning types. Stored in the child's workspace.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number">3</div>
+      <div class="flow-content">
+        <h3>Adapted Teaching</h3>
+        <p>Every explanation is tailored. Same concept, different delivery — matched to how they learn best.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number">4</div>
+      <div class="flow-content">
+        <h3>Continuous Learning</h3>
+        <p>The tutor observes what works. Notes are added to the profile over time for even better personalization.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container" style="max-width:720px;">
+    <h2 style="text-align:center;">Same Concept, Different Approach</h2>
+    <p style="text-align:center;color:var(--muted);margin-bottom:2rem;">Here's how the tutor explains "dividing 12 by 3" to different learners:</p>
+
+    <div class="comparison">
+      <div class="comparison-card">
+        <h4>🛠️ Kinesthetic</h4>
+        <p>"Imagine you have 12 stickers and want to share them equally with 2 friends. How many does each person get?"</p>
+      </div>
+      <div class="comparison-card">
+        <h4>📝 Read/Write</h4>
+        <p>"Division rule: dividend ÷ divisor = quotient. Here: 12 ÷ 3 = 4. The dividend is what you're splitting up."</p>
+      </div>
+      <div class="comparison-card">
+        <h4>🖼️ Visual</h4>
+        <p>"Picture 12 dots: ●●●● | ●●●● | ●●●● — see the three groups? Each group has 4."</p>
+      </div>
+      <div class="comparison-card">
+        <h4>💬 Auditory</h4>
+        <p>"If I asked you to split 12 things three ways, how would you figure it out? Walk me through your thinking."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="container" style="max-width:720px;">
+    <h2 style="text-align:center;">Sample Onboarding</h2>
+    
+    <div class="example-box">
+      <span class="label">Matteo (Math Tutor)</span>
+Hey Arthur! 👋 Quick question before we start —<br>
+when you learn something new, what helps most?<br><br>
+A) Reading about it 📖<br>
+B) Trying it out right away 🎮<br>
+C) Someone explaining it to me 🗣️<br>
+D) Seeing a picture or diagram 📊
+    </div>
+
+    <p style="color:var(--muted);text-align:center;">Four questions like this → learning type detected → saved to profile.</p>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="container">
+    <h2>Try It Yourself</h2>
+    <p style="color:var(--muted);margin-bottom:1.5rem;">Learning types are built into ClawTutor. Set it up and the tutors handle the rest.</p>
+    <a href="https://github.com/groonvandorp/ClawTutor" class="cta-btn">View on GitHub →</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="courses.html">Courses</a>
+      <a href="olivers-setup.html">Real setup</a>
+      <a href="ecosystem.html">Built on</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html">Contact</a>
+      <a href="https://github.com/groonvandorp/ClawTutor/blob/main/LICENSE" target="_blank">License</a>
+    </div>
+    <p><img src="icon.png" alt="" style="height:22px;width:22px;vertical-align:middle;border-radius:5px;margin-right:.4rem;" />ClawTutor — made with ❤️ by <a href="https://github.com/groonvandorp" target="_blank">Oliver Gruhn-van Dorp</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
