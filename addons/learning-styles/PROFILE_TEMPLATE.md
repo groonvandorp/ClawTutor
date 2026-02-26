@@ -1,27 +1,27 @@
 # LEARNING_PROFILE.md
 
-## Lerntyp
-- **Primär:** unbekannt
-- **Sekundär:** —
-- **Ermittelt am:** —
+## Learning Type
+- **Primary:** unknown
+- **Secondary:** —
+- **Assessed on:** —
 
-## Beobachtungen
-*(Was fällt auf? Was funktioniert gut, was nicht?)*
+## Observations
+*(What stands out? What works well, what doesn't?)*
 
 - 
 
-## Anpassungen
-*(Spezifische Hinweise für den Tutor)*
+## Adaptations
+*(Specific hints for the tutor)*
 
 - 
 
 ---
 
-### Lerntyp-Referenz
+### Learning Type Reference
 
-| Typ | Lernt am besten durch | Tutor-Stil |
-|-----|----------------------|------------|
-| Visual | Bilder, Diagramme, Farben | Skizzen beschreiben, "stell dir vor", räumliche Metaphern |
-| Auditory | Hören, Sprechen, Diskussion | Rückfragen stellen, "erklär mir...", laut durchsprechen |
-| Read/Write | Lesen, Listen, Notizen | Definitionen, Stichpunkte, Zusammenfassungen |
-| Kinesthetic | Anfassen, Ausprobieren | Alltagsbeispiele, "probier mal", Schritt-für-Schritt |
+| Type | Learns best through | Tutor style |
+|------|---------------------|-------------|
+| Visual | Images, diagrams, colors | Describe sketches, "imagine...", spatial metaphors |
+| Auditory | Listening, speaking, discussion | Ask questions, "explain to me...", talk through |
+| Read/Write | Reading, lists, notes | Definitions, bullet points, summaries |
+| Kinesthetic | Touching, trying | Real-world examples, "try this...", step-by-step |

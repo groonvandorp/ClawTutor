@@ -1,69 +1,69 @@
-# Lerntyp-Onboarding
+# Learning Type Onboarding
 
-Kurzer Test (4 Fragen) zur Ermittlung des Lerntyps. Der Tutor führt diesen beim ersten Kontakt durch, wenn `LEARNING_PROFILE.md` noch nicht existiert oder `lerntyp: unbekannt` enthält.
+Short assessment (4 questions) to determine learning type. The tutor runs this on first contact when `LEARNING_PROFILE.md` doesn't exist yet or contains `type: unknown`.
 
-## Ablauf
+## Flow
 
-Der Tutor stellt die Fragen locker im Gespräch, nicht wie ein Test. Beispiel:
-
----
-
-**Tutor:** "Hey! Bevor wir loslegen — ich würde dich gern besser kennenlernen. Kurze Frage: Wenn du was Neues lernen willst, wie machst du das am liebsten?"
-
-### Frage 1: Neue Info aufnehmen
-"Stell dir vor, du willst lernen, wie ein neues Spiel funktioniert. Was würdest du am liebsten tun?"
-
-- A) Ein Video anschauen, das es zeigt
-- B) Jemand erklärt es dir mündlich
-- C) Die Anleitung lesen
-- D) Einfach ausprobieren
-
-### Frage 2: Etwas erklären
-"Wenn du einem Freund erklären sollst, wie man zu deinem Haus kommt — wie würdest du das machen?"
-
-- A) Eine Karte oder Skizze zeichnen
-- B) Es ihm einfach erzählen
-- C) Die Adresse und Wegbeschreibung aufschreiben
-- D) Ihn hinbringen oder per Video-Call zeigen
-
-### Frage 3: Sich erinnern
-"Wie merkst du dir Sachen am besten für eine Arbeit?"
-
-- A) Mit Farben, Markierungen, Mindmaps
-- B) Mir selbst laut vorsagen oder jemandem erklären
-- C) Zusammenfassungen schreiben, Listen machen
-- D) Beispiele durchrechnen, Übungen machen
-
-### Frage 4: Langeweile
-"Was nervt dich am meisten beim Lernen?"
-
-- A) Wenn alles nur Text ist, keine Bilder
-- B) Wenn ich nur still lesen soll und niemand erklärt
-- C) Wenn es keine klare Struktur gibt
-- D) Wenn ich nur zuhören soll und nichts machen kann
+The tutor asks questions casually in conversation, not like a formal test. Example:
 
 ---
 
-## Auswertung
+**Tutor:** "Hey! Before we start — I'd like to get to know you a bit. Quick question: When you want to learn something new, how do you prefer to do it?"
 
-| Meiste Antworten | Lerntyp |
-|------------------|---------|
+### Question 1: Taking in new information
+"Imagine you want to learn how a new game works. What would you prefer to do?"
+
+- A) Watch a video showing it
+- B) Have someone explain it to you
+- C) Read the instructions
+- D) Just try it out
+
+### Question 2: Explaining something
+"If you had to explain to a friend how to get to your house — how would you do it?"
+
+- A) Draw a map or sketch
+- B) Just tell them
+- C) Write down the address and directions
+- D) Walk them there or show via video call
+
+### Question 3: Remembering
+"How do you best remember things for a test?"
+
+- A) With colors, highlights, mind maps
+- B) Saying it out loud or explaining to someone
+- C) Writing summaries, making lists
+- D) Working through examples, doing exercises
+
+### Question 4: Boredom
+"What annoys you most when learning?"
+
+- A) When everything is just text, no images
+- B) When I just have to read quietly and nobody explains
+- C) When there's no clear structure
+- D) When I just have to listen and can't do anything
+
+---
+
+## Scoring
+
+| Most answers | Learning type |
+|--------------|---------------|
 | A | Visual |
 | B | Auditory |
 | C | Read/Write |
 | D | Kinesthetic |
 
-Bei Gleichstand: Kombityp (z.B. "Visual-Kinesthetic") oder nachfragen.
+If tied: combination type (e.g. "Visual-Kinesthetic") or ask follow-up.
 
-## Nach dem Test
+## After the assessment
 
-Der Tutor:
-1. Erstellt/aktualisiert `LEARNING_PROFILE.md`
-2. Bestätigt kurz: "Cool, ich merk mir das! Ich versuch dann, mehr mit [Bildern/Erklärungen/Listen/Beispielen] zu arbeiten."
-3. Macht normal weiter — kein großes Ding draus machen
+The tutor:
+1. Creates/updates `LEARNING_PROFILE.md`
+2. Briefly confirms: "Cool, I'll remember that! I'll try to use more [images/explanations/lists/examples]."
+3. Continues normally — don't make a big deal of it
 
-## Wichtig
+## Important
 
-- Kein Zwang! Wenn das Kind keine Lust hat, überspringen
-- Locker halten, nicht wie ein Fragebogen
-- Der Test ist ein Anhaltspunkt, keine Diagnose
+- No pressure! If the child doesn't want to, skip it
+- Keep it casual, not like a questionnaire
+- The assessment is a guideline, not a diagnosis

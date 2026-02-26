@@ -1,41 +1,41 @@
 # Add-on: Learning Styles (VARK)
 
-Optionale Erweiterung für ClawTutor, die den Lerntyp des Kindes ermittelt und den Tutor-Stil entsprechend anpasst.
+Optional extension for ClawTutor that determines a child's learning type and adapts the tutor's teaching style accordingly.
 
-## Was ist das?
+## What is this?
 
-Basiert auf dem VARK-Modell:
-- **V**isual — lernt durch Bilder, Diagramme, räumliche Darstellung
-- **A**uditory — lernt durch Hören, Erklären, Diskussion
-- **R**ead/Write — lernt durch Lesen, Listen, Notizen
-- **K**inesthetic — lernt durch Anfassen, Ausprobieren, Bewegung
+Based on the VARK model:
+- **V**isual — learns through images, diagrams, spatial representation
+- **A**uditory — learns through listening, explaining, discussion
+- **R**ead/Write — learns through reading, lists, notes
+- **K**inesthetic — learns through touching, trying, movement
 
 ## Installation
 
-1. Kopiere `PROFILE_TEMPLATE.md` in den Kind-Workspace als `LEARNING_PROFILE.md`
-2. Füge den Inhalt von `tutor-patch.md` in die SOUL.md des Tutors ein
-3. Optional: Nutze `ONBOARDING.md` für den Lerntyp-Test beim ersten Kontakt
+1. Copy `PROFILE_TEMPLATE.md` to the child's workspace as `LEARNING_PROFILE.md`
+2. Add the content of `tutor-patch.md` to the tutor's SOUL.md
+3. Optional: Use `ONBOARDING.md` for the learning type assessment on first contact
 
-## Dateien
+## Files
 
-| Datei | Zweck |
-|-------|-------|
-| `README.md` | Diese Anleitung |
-| `ONBOARDING.md` | 4-Fragen-Test zur Lerntyp-Ermittlung |
-| `PROFILE_TEMPLATE.md` | Vorlage für das Lernprofil |
-| `tutor-patch.md` | Ergänzung für die Tutor-SOUL.md |
+| File | Purpose |
+|------|---------|
+| `README.md` | This guide |
+| `ONBOARDING.md` | 4-question assessment to determine learning type |
+| `PROFILE_TEMPLATE.md` | Template for the learning profile |
+| `tutor-patch.md` | Addition to the tutor's SOUL.md |
 
-## Nutzung
+## Usage
 
-### Mit Onboarding (empfohlen)
-Beim ersten Kontakt führt der Tutor den kurzen Test durch und erstellt das Profil automatisch.
+### With Onboarding (recommended)
+On first contact, the tutor runs a short assessment and creates the profile automatically.
 
-### Ohne Onboarding
-Eltern/Lehrer können das Profil auch manuell ausfüllen, wenn sie den Lerntyp schon kennen.
+### Without Onboarding
+Parents/teachers can also fill in the profile manually if they already know the learning type.
 
-### Deaktivieren
-Einfach `LEARNING_PROFILE.md` löschen oder `lerntyp: unbekannt` setzen — der Tutor verhält sich dann neutral.
+### Disabling
+Simply delete `LEARNING_PROFILE.md` or set `type: unknown` — the tutor will then behave neutrally.
 
-## Hinweis
+## Note
 
-Das VARK-Modell ist ein vereinfachtes Werkzeug. Kinder sind keine festen Typen — die meisten lernen multimodal. Der Tutor nutzt den Lerntyp als Startpunkt, nicht als Schublade.
+The VARK model is a simplified tool. Children aren't fixed types — most learn multimodally. The tutor uses the learning type as a starting point, not a label.
