@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Screen Time Economy — ClawTutor</title>
+  <meta name="description" content="Turn screen time from daily conflict into motivation. Earn minutes through learning, spend them on entertainment." />
+  <link rel="icon" type="image/png" href="../icon.png" />
+  <link rel="apple-touch-icon" href="../icon.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0b0d12; --surface: #13161e; --surface2: #1b1f2a; --border: #252938;
+      --accent: #ff5b35; --accent2: #ffb03a; --green: #3ddc84; --blue: #4fa3e0;
+      --text: #eef0f6; --muted: #7a7f94; --radius: 14px;
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); text-decoration: none; } a:hover { text-decoration: underline; }
+    .container { max-width: 800px; margin: 0 auto; padding: 0 1.5rem; }
+    .grad { background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,13,18,.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: .9rem 0; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    .nav-logo { display: flex; align-items: center; gap: .5rem; font-size: 1.1rem; font-weight: 800; color: var(--text); } .nav-logo:hover { text-decoration: none; }
+    .nav-links { display: flex; align-items: center; gap: 1.75rem; }
+    .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 500; } .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .hero { padding: 4rem 0 3rem; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .breadcrumb { font-size: .85rem; color: var(--muted); margin-bottom: 1rem; } .breadcrumb a { color: var(--muted); }
+    h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; line-height: 1.15; letter-spacing: -.03em; }
+    .lead { font-size: 1.15rem; color: var(--muted); margin-top: 1rem; max-width: 600px; }
+    .content { padding: 3rem 0 5rem; }
+    h2 { font-size: 1.5rem; font-weight: 700; margin: 2.5rem 0 1rem; }
+    h3 { font-size: 1.15rem; font-weight: 700; margin: 2rem 0 .5rem; }
+    p { margin-bottom: 1.25rem; }
+    ul, ol { padding-left: 1.5rem; margin-bottom: 1.25rem; } li { margin-bottom: .4rem; }
+    code { font-family: var(--mono); font-size: .85em; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: .15rem .4rem; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 2rem 0; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; }
+    .card .emoji { font-size: 2rem; margin-bottom: .75rem; display: block; }
+    .card h3 { margin: 0 0 .5rem; font-size: 1.1rem; }
+    .card p { color: var(--muted); font-size: .9rem; margin: 0; }
+    .highlight-box { background: linear-gradient(135deg, rgba(255,91,53,.1), rgba(255,176,58,.1)); border: 1px solid var(--accent); border-radius: var(--radius); padding: 1.5rem; margin: 2rem 0; }
+    .highlight-box h3 { margin-top: 0; color: var(--accent); }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: .9rem; }
+    th, td { padding: .75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+    th { font-weight: 700; color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; }
+    .back-link { display: inline-flex; align-items: center; gap: .4rem; font-size: .9rem; font-weight: 600; color: var(--muted); margin-top: 2rem; } .back-link:hover { color: var(--text); text-decoration: none; }
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 2rem 0; text-align: center; }
+    footer p { color: var(--muted); font-size: .85rem; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo"><img src="../icon.png" alt="" style="height:32px;width:32px;border-radius:7px;" /><span>ClawTutor</span></a>
+    <div class="nav-links">
+      <a href="../index.html#features">Features</a>
+      <a href="../courses.html">Courses</a>
+      <a href="../blog.html">Blog</a>
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="container">
+    <div class="breadcrumb"><a href="../index.html">ClawTutor</a> / <a href="../index.html#features">Features</a> / Screen Time</div>
+    <h1>Screen Time <span class="grad">Economy</span></h1>
+    <p class="lead">Turn the daily screen time argument into a self-regulating system. Kids earn minutes through learning, spend them on entertainment.</p>
+  </div>
+</div>
+
+<div class="content">
+  <div class="container">
+
+    <h2>The Problem</h2>
+    <p>Every parent knows the negotiation: "Can I watch TV?" → "Did you do your homework?" → groaning → frustration → repeat daily.</p>
+    <p>ClawTutor removes you from the loop. Screen time becomes something kids <strong>earn</strong>, not something they <strong>ask for</strong>.</p>
+
+    <h2>How It Works</h2>
+
+    <div class="card-grid">
+      <div class="card">
+        <span class="emoji">✅</span>
+        <h3>Earn</h3>
+        <p>Correct quiz answers add minutes to their balance. More effort = more time.</p>
+      </div>
+      <div class="card">
+        <span class="emoji">💰</span>
+        <h3>Bank</h3>
+        <p>Minutes accumulate in a SQLite database. Check balance anytime via chat.</p>
+      </div>
+      <div class="card">
+        <span class="emoji">📺</span>
+        <h3>Spend</h3>
+        <p>Request TV/console time. System checks balance, unlocks device, starts countdown.</p>
+      </div>
+      <div class="card">
+        <span class="emoji">🔒</span>
+        <h3>Auto-Lock</h3>
+        <p>When time expires, device goes back offline. No drama, no negotiation.</p>
+      </div>
+    </div>
+
+    <h2>The Rates</h2>
+
+    <table>
+      <tr><th>Activity</th><th>Minutes Earned</th></tr>
+      <tr><td>Correct quiz answer</td><td>+10 min</td></tr>
+      <tr><td>Perfect quiz (3/3)</td><td>+10 min bonus</td></tr>
+      <tr><td>Voluntary practice</td><td>+5 min per correct</td></tr>
+      <tr><td>5-day streak</td><td>+30 min weekend bonus</td></tr>
+    </table>
+
+    <div class="highlight-box">
+      <h3>🔥 Streaks Add Up</h3>
+      <p>Consecutive days of practice unlock bonus minutes. This is where the magic happens — kids start <em>wanting</em> to practice daily because breaking the streak means losing the bonus.</p>
+      <p>A streak resets to zero if a day is missed. The bonus is gone. Start over.</p>
+    </div>
+
+    <h2>Sample Interaction</h2>
+
+    <p><strong>Arthur:</strong> Kann ich 30 Minuten Beamer?</p>
+    <p><strong>Matteo:</strong> 🎮 Dein Guthaben: 45 Minuten. Ich frag Papa...</p>
+    <p><em>[System checks balance, sends request to parent agent]</em></p>
+    <p><strong>System:</strong> ✅ Beamer freigeschaltet für 30 Min. Auto-Off um 17:45.</p>
+
+    <h2>Parent Controls</h2>
+    <ul>
+      <li><strong>Manual override:</strong> Parents can unlock/lock devices anytime via chat</li>
+      <li><strong>Grant bonus:</strong> Add minutes for chores, good behavior, etc.</li>
+      <li><strong>View history:</strong> Full transaction log — when earned, when spent</li>
+      <li><strong>Adjust rates:</strong> Customize points per activity in config</li>
+    </ul>
+
+    <h2>Technical Implementation</h2>
+    <p>The screen time system uses:</p>
+    <ul>
+      <li><code>screentime.db</code> — SQLite database tracking balances and transactions</li>
+      <li><strong>Native plugin</strong> — OpenClaw plugin with tools like <code>screentime_balance</code>, <code>screentime_add</code></li>
+      <li><strong>Device control</strong> — Integrates with Pi-hole for DNS blocking (see <a href="device-control.html">Device Control</a>)</li>
+      <li><strong>Cron jobs</strong> — Auto-off checks every 2 minutes for expired sessions</li>
+    </ul>
+
+    <a href="../index.html#features" class="back-link">← Back to Features</a>
+
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p><img src="../icon.png" alt="" style="height:22px;width:22px;vertical-align:middle;border-radius:5px;margin-right:.4rem;" />ClawTutor — <a href="https://github.com/groonvandorp/ClawTutor">GitHub</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
