@@ -1,19 +1,19 @@
 #!/bin/bash
-# announce.sh - Text-to-Speech Ansagen über Bluetooth-Speaker
-# Usage: ./announce.sh "Nachricht" [sprache]
+# announce.sh - Text-to-Speech announcements via Bluetooth speaker
+# Usage: ./announce.sh "message" [language]
 #
-# Beispiele:
-#   ./announce.sh "Max, Zeit fürs Mathe-Quiz!"
-#   ./announce.sh "Time for your English quiz!" en
+# Examples:
+#   ./announce.sh "Max, time for your math quiz!"
+#   ./announce.sh "Zeit fürs Mathe-Quiz!" de
 #
-# Nutzt Google TTS (gtts) - kostenlos, kein API Key nötig
+# Uses Google TTS (gtts) - free, no API key required
 
 MESSAGE="$1"
-LANG="${2:-de}"  # de, en, fr, es, ...
+LANG="${2:-en}"  # en, de, fr, es, ...
 
 if [ -z "$MESSAGE" ]; then
-    echo "Usage: $0 \"Nachricht\" [sprache]"
-    echo "Sprachen: de (default), en, fr, es, ..."
+    echo "Usage: $0 \"message\" [language]"
+    echo "Languages: en (default), de, fr, es, ..."
     exit 1
 fi
 
