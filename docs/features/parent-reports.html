@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parent Reports — ClawTutor</title>
+  <meta name="description" content="Stay informed without micromanaging. Get automated weekly reports on your child's learning progress, streaks, and achievements." />
+  <link rel="icon" type="image/png" href="../assets/icon.png" />
+  <link rel="apple-touch-icon" href="../assets/icon.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0b0d12; --surface: #13161e; --surface2: #1b1f2a; --border: #252938;
+      --accent: #ff5b35; --accent2: #ffb03a; --green: #3ddc84; --blue: #4fa3e0;
+      --text: #eef0f6; --muted: #7a7f94; --radius: 14px;
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); text-decoration: none; } a:hover { text-decoration: underline; }
+    .container { max-width: 800px; margin: 0 auto; padding: 0 1.5rem; }
+    .grad { background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,13,18,.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: .9rem 0; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    .nav-logo { display: flex; align-items: center; gap: .5rem; font-size: 1.1rem; font-weight: 800; color: var(--text); } .nav-logo:hover { text-decoration: none; }
+    .nav-links { display: flex; align-items: center; gap: 1.75rem; }
+    .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 500; } .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .hero { padding: 4rem 0 3rem; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .breadcrumb { font-size: .85rem; color: var(--muted); margin-bottom: 1rem; } .breadcrumb a { color: var(--muted); }
+    h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; line-height: 1.15; letter-spacing: -.03em; }
+    .lead { font-size: 1.15rem; color: var(--muted); margin-top: 1rem; max-width: 600px; }
+    .content { padding: 3rem 0 5rem; }
+    h2 { font-size: 1.5rem; font-weight: 700; margin: 2.5rem 0 1rem; }
+    h3 { font-size: 1.15rem; font-weight: 700; margin: 2rem 0 .5rem; }
+    p { margin-bottom: 1.25rem; }
+    ul, ol { padding-left: 1.5rem; margin-bottom: 1.25rem; } li { margin-bottom: .4rem; }
+    code { font-family: var(--mono); font-size: .85em; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: .15rem .4rem; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 2rem 0; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; }
+    .card .emoji { font-size: 2rem; margin-bottom: .75rem; display: block; }
+    .card h3 { margin: 0 0 .5rem; font-size: 1.1rem; }
+    .card p { color: var(--muted); font-size: .9rem; margin: 0; }
+    .highlight-box { background: linear-gradient(135deg, rgba(255,91,53,.1), rgba(255,176,58,.1)); border: 1px solid var(--accent); border-radius: var(--radius); padding: 1.5rem; margin: 2rem 0; }
+    .highlight-box h3 { margin-top: 0; color: var(--accent); }
+    .example-report { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin: 2rem 0; font-size: .9rem; }
+    .example-report .header { color: var(--accent); font-weight: 700; margin-bottom: 1rem; }
+    .example-report .section { margin-bottom: 1rem; }
+    .example-report .section-title { font-weight: 600; color: var(--text); margin-bottom: .25rem; }
+    .example-report .metric { display: flex; justify-content: space-between; padding: .3rem 0; border-bottom: 1px solid var(--border); }
+    .example-report .metric:last-child { border-bottom: none; }
+    .example-report .label { color: var(--muted); }
+    .example-report .value { color: var(--text); font-weight: 500; }
+    .example-report .good { color: var(--green); }
+    .example-report .note { color: var(--muted); font-style: italic; margin-top: .5rem; }
+    .back-link { display: inline-flex; align-items: center; gap: .4rem; font-size: .9rem; font-weight: 600; color: var(--muted); margin-top: 2rem; } .back-link:hover { color: var(--text); text-decoration: none; }
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 2rem 0; text-align: center; }
+    footer p { color: var(--muted); font-size: .85rem; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo"><img src="../assets/icon.png" alt="" style="height:32px;width:32px;border-radius:7px;" /><span>ClawTutor</span></a>
+    <div class="nav-links">
+      <a href="../index.html#features">Features</a>
+      <a href="../courses.html">Courses</a>
+      <a href="../blog.html">Blog</a>
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="container">
+    <div class="breadcrumb"><a href="../index.html">ClawTutor</a> / <a href="../index.html#features">Features</a> / Parent Reports</div>
+    <h1>Parent <span class="grad">Reports</span></h1>
+    <p class="lead">Stay informed without micromanaging. Get automated weekly summaries of your child's learning progress, delivered to your phone.</p>
+  </div>
+</div>
+
+<div class="content">
+  <div class="container">
+
+    <h2>The Problem</h2>
+    <p>"How's school going?" → "Fine." That's often all parents get. You want to stay involved in your child's learning, but you don't want to hover or interrogate them every day.</p>
+    <p>Meanwhile, the tutor knows everything — every question asked, every struggle, every breakthrough. That information should reach you too.</p>
+
+    <h2>The Solution</h2>
+    <p>ClawTutor sends you automated reports summarizing what happened during the week. No extra effort from you or your child — just a message that arrives when you need it.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <span class="emoji">📊</span>
+        <h3>Weekly Summary</h3>
+        <p>Overview of sessions, topics covered, and overall engagement.</p>
+      </div>
+      <div class="card">
+        <span class="emoji">🔥</span>
+        <h3>Streak Tracking</h3>
+        <p>See if they're staying consistent or need a nudge.</p>
+      </div>
+      <div class="card">
+        <span class="emoji">💡</span>
+        <h3>Insights</h3>
+        <p>What's clicking, what's challenging, what needs attention.</p>
+      </div>
+      <div class="card">
+        <span class="emoji">🎯</span>
+        <h3>Screen Time Earned</h3>
+        <p>Total minutes earned through learning this week.</p>
+      </div>
+    </div>
+
+    <h2>Example Report</h2>
+    <div class="example-report">
+      <div class="header">📋 Weekly Report: Lena (Feb 19–25)</div>
+      
+      <div class="section">
+        <div class="section-title">📊 Sessions</div>
+        <div class="metric"><span class="label">Total sessions</span><span class="value">8</span></div>
+        <div class="metric"><span class="label">Math (Matteo)</span><span class="value">5 sessions</span></div>
+        <div class="metric"><span class="label">English (Nelly)</span><span class="value">3 sessions</span></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">🔥 Streaks</div>
+        <div class="metric"><span class="label">Math streak</span><span class="value good">7 days 🔥</span></div>
+        <div class="metric"><span class="label">English streak</span><span class="value">3 days</span></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">📚 Topics Covered</div>
+        <div class="metric"><span class="label">Math</span><span class="value">Fractions, decimal conversion</span></div>
+        <div class="metric"><span class="label">English</span><span class="value">Past tense, irregular verbs</span></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">🎮 Screen Time</div>
+        <div class="metric"><span class="label">Earned this week</span><span class="value good">+185 min</span></div>
+        <div class="metric"><span class="label">Current balance</span><span class="value">42 min</span></div>
+      </div>
+
+      <div class="note">💡 Lena struggled a bit with converting fractions to decimals. Might be worth a quick chat about it.</div>
+    </div>
+
+    <h2>How It Works</h2>
+    <ol>
+      <li><strong>Automatic tracking</strong> — The tutor logs every interaction, topic, and result.</li>
+      <li><strong>Weekly aggregation</strong> — Every Friday, the system compiles the week's data.</li>
+      <li><strong>Smart delivery</strong> — Report sent to your WhatsApp, Telegram, or wherever you configured.</li>
+      <li><strong>Actionable insights</strong> — Not just numbers, but notes on what might need attention.</li>
+    </ol>
+
+    <div class="highlight-box">
+      <h3>🔒 Privacy First</h3>
+      <p>Reports go only to configured parent accounts. Children don't see the parent reports — they get their own progress view if they want it. The goal is transparency for parents, not surveillance for kids.</p>
+    </div>
+
+    <h2>Configuration</h2>
+    <p>Set up parent reports by adding a cron job. Example for Friday at 6 PM:</p>
+    <pre><code>{
+  "schedule": { "kind": "cron", "expr": "0 18 * * 5" },
+  "payload": {
+    "kind": "agentTurn",
+    "message": "Generate weekly parent report for all children"
+  },
+  "sessionTarget": "isolated"
+}</code></pre>
+    <p>Reports are sent to the parent group or individual parent chats, depending on your setup.</p>
+
+    <h2>Customization</h2>
+    <ul>
+      <li><strong>Frequency</strong> — Weekly, bi-weekly, or daily if you prefer</li>
+      <li><strong>Detail level</strong> — Summary only, or include specific questions/answers</li>
+      <li><strong>Subjects</strong> — All subjects or just specific ones</li>
+      <li><strong>Multiple children</strong> — Separate reports or combined family overview</li>
+    </ul>
+
+    <a href="../index.html#features" class="back-link">← Back to Features</a>
+
+  </div>
+</div>
+
+<footer>
+  <p><img src="../assets/icon.png" alt="" style="height:22px;width:22px;vertical-align:middle;border-radius:5px;margin-right:.4rem;" />ClawTutor — <a href="https://github.com/groonvandorp/ClawTutor">GitHub</a></p>
+</footer>
+
+</body>
+</html>
