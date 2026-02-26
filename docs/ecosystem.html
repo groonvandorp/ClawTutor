@@ -468,6 +468,89 @@
   </div>
 </section>
 
+<!-- ── Audio & Hardware ─────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="section-label">Audio &amp; Hardware</div>
+    <p style="color:var(--muted);font-size:.9rem;margin-bottom:1.5rem;line-height:1.6;">Optional components for voice announcements, music tutoring, and audio feedback.</p>
+
+    <div class="project-card">
+      <div class="project-logo" style="font-size:2rem;">🔊</div>
+      <div class="project-body">
+        <div class="project-header">
+          <span class="project-name">Bluetooth Audio (PipeWire)</span>
+          <span class="project-role project-role--optional">Audio · Optional</span>
+        </div>
+        <p class="project-desc">
+          <strong>Voice announcements via Bluetooth speaker.</strong>
+          Connect a Bluetooth speaker to the Pi and ClawTutor can announce quiz reminders, screen time warnings, and more. Uses PipeWire (or PulseAudio) with BlueZ for audio routing. Any Bluetooth speaker works.
+        </p>
+        <div class="project-links">
+          <a href="https://pipewire.org" target="_blank" class="project-link">🌐 pipewire.org</a>
+          <a href="https://github.com/groonvandorp/ClawTutor/tree/main/addons/voice-announcements" target="_blank" class="project-link">📦 Addon</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-logo" style="font-size:2rem;">🗣️</div>
+      <div class="project-body">
+        <div class="project-header">
+          <span class="project-name">Text-to-Speech (TTS)</span>
+          <span class="project-role project-role--optional">Audio · Optional</span>
+        </div>
+        <p class="project-desc">
+          <strong>Give your tutors a voice.</strong>
+          ClawTutor supports multiple TTS providers: Google TTS (free, good quality), OpenAI TTS (paid, great quality), or ElevenLabs (paid, realistic voices). Used for voice announcements and dictation exercises.
+        </p>
+        <div class="project-links">
+          <a href="https://cloud.google.com/text-to-speech" target="_blank" class="project-link">🌐 Google TTS</a>
+          <a href="https://platform.openai.com/docs/guides/text-to-speech" target="_blank" class="project-link">🌐 OpenAI TTS</a>
+          <a href="https://elevenlabs.io" target="_blank" class="project-link">🌐 ElevenLabs</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-logo">
+        <img src="https://cdn.simpleicons.org/mqtt/660066" alt="" />
+      </div>
+      <div class="project-body">
+        <div class="project-header">
+          <span class="project-name">MQTT (Mosquitto)</span>
+          <span class="project-role project-role--optional">Protocol · Optional</span>
+        </div>
+        <p class="project-desc">
+          <strong>Real-time hardware communication.</strong>
+          MQTT is a lightweight publish-subscribe protocol used by the MIDI interface addon. A second Pi reads MIDI keyboard input and publishes notes to an MQTT broker; the tutor agent subscribes and provides feedback. Also useful for IoT integrations.
+        </p>
+        <div class="project-links">
+          <a href="https://mosquitto.org" target="_blank" class="project-link">🌐 mosquitto.org</a>
+          <a href="https://github.com/groonvandorp/ClawTutor/tree/main/addons/midi-interface" target="_blank" class="project-link">📦 MIDI Addon</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-logo" style="font-size:2rem;">🎹</div>
+      <div class="project-body">
+        <div class="project-header">
+          <span class="project-name">MIDI Keyboard</span>
+          <span class="project-role project-role--optional">Hardware · Optional</span>
+        </div>
+        <p class="project-desc">
+          <strong>Music tutoring with Melody.</strong>
+          Connect any USB MIDI keyboard (like a Korg Monologue) to a second Raspberry Pi. Notes are captured in real-time and sent to Melody, the music tutor, who provides feedback on scales, chords, and exercises via WhatsApp.
+        </p>
+        <div class="project-links">
+          <a href="https://github.com/groonvandorp/ClawTutor/tree/main/addons/midi-interface" target="_blank" class="project-link">📦 MIDI Addon</a>
+          <a href="blog/2026-02-22-melody-midi.html" class="project-link">📝 Blog post</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ── Thank you ──────────────────────────────────────────────────── -->
 <div class="thanks">
   <div class="container">
