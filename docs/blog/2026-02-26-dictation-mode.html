@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dictation Mode — Language Learning with Voice Messages — ClawTutor Blog</title>
+  <meta name="description" content="ClawTutor's English tutor Nelly can now send voice messages for dictation exercises and vocabulary practice. Real listening comprehension, real spelling practice." />
+  <link rel="icon" type="image/png" href="../assets/icon.png" />
+  <link rel="apple-touch-icon" href="../assets/icon.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0b0d12;
+      --surface:  #13161e;
+      --surface2: #1b1f2a;
+      --border:   #252938;
+      --accent:   #ff5b35;
+      --accent2:  #ffb03a;
+      --green:    #3ddc84;
+      --blue:     #4fa3e0;
+      --purple:   #9b72f4;
+      --text:     #eef0f6;
+      --muted:    #7a7f94;
+      --radius:   14px;
+      --font:     'Inter', system-ui, -apple-system, sans-serif;
+      --mono:     'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 17px; line-height: 1.75; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: 720px; margin: 0 auto; padding: 0 1.5rem; }
+    .grad { background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,13,18,.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: .9rem 0; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    .nav-logo { display: flex; align-items: center; gap: .5rem; font-size: 1.1rem; font-weight: 800; color: var(--text); }
+    .nav-logo:hover { text-decoration: none; opacity: .85; }
+    .nav-links { display: flex; align-items: center; gap: 1.75rem; }
+    .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    .post-header { padding: 4rem 0 2.5rem; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .breadcrumb { font-size: .85rem; color: var(--muted); margin-bottom: 1.25rem; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--text); }
+
+    .pill { display: inline-flex; align-items: center; gap: .3rem; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; border-radius: 999px; padding: .22rem .65rem; }
+    .pill--feature { background: rgba(61,220,132,.15); color: var(--green); }
+    .pill--meta { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+
+    h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); font-weight: 800; line-height: 1.2; letter-spacing: -.03em; margin-top: 1rem; }
+    .post-meta { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.25rem; }
+
+    .post-body { padding: 3rem 0 4rem; }
+    .post-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2.5rem 0 1rem; }
+    .post-body h3 { font-size: 1.15rem; font-weight: 700; margin: 2rem 0 .75rem; }
+    .post-body p { margin-bottom: 1.25rem; }
+    .post-body ul, .post-body ol { padding-left: 1.4rem; margin-bottom: 1.25rem; }
+    .post-body li { margin-bottom: .4rem; }
+    .post-body pre { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; overflow-x: auto; font-family: var(--mono); font-size: .85rem; line-height: 1.6; margin: 1.5rem 0; }
+    .post-body code { font-family: var(--mono); font-size: .88em; background: var(--surface2); border-radius: 4px; padding: .15rem .35rem; }
+    .post-body pre code { background: none; padding: 0; }
+    .post-body blockquote { border-left: 3px solid var(--accent); padding-left: 1rem; margin: 1.5rem 0; color: var(--muted); font-style: italic; }
+
+    .chat-example { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin: 2rem 0; font-size: .9rem; }
+    .chat-msg { margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--border); }
+    .chat-msg:last-child { margin-bottom: 0; }
+    .chat-msg.child { border-color: var(--blue); }
+    .chat-msg.tutor { border-color: var(--green); }
+    .chat-sender { font-weight: 700; font-size: .8rem; margin-bottom: .25rem; }
+    .chat-sender.child { color: var(--blue); }
+    .chat-sender.tutor { color: var(--green); }
+    .chat-voice { display: inline-flex; align-items: center; gap: .5rem; background: var(--surface2); border-radius: 20px; padding: .4rem .8rem; font-size: .85rem; }
+    .chat-voice::before { content: "🎧"; }
+
+    .callout { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin: 2rem 0; }
+    .callout-title { font-weight: 700; margin-bottom: .5rem; display: flex; align-items: center; gap: .5rem; }
+    .callout p:last-child { margin-bottom: 0; }
+
+    .back-link { display: inline-flex; align-items: center; gap: .4rem; font-size: .9rem; font-weight: 600; color: var(--muted); margin-top: 2rem; }
+    .back-link:hover { color: var(--text); text-decoration: none; }
+
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 3rem 0; margin-top: 2rem; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2rem; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+    .footer-links a { color: var(--muted); font-size: .9rem; }
+    .footer-links a:hover { color: var(--text); text-decoration: none; }
+    .footer-bottom { width: 100%; text-align: center; padding-top: 2rem; border-top: 1px solid var(--border); margin-top: 1rem; }
+    .footer-bottom p { color: var(--muted); font-size: .85rem; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo"><img src="../assets/icon.png" alt="" style="height:32px;width:32px;border-radius:7px;" /><span>ClawTutor</span></a>
+    <div class="nav-links">
+      <a href="../index.html#features">Features</a>
+      <a href="../courses.html">Courses</a>
+      <a href="../blog.html" class="active">Blog</a>
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<div class="post-header">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="../index.html">ClawTutor</a>
+      <span style="color:var(--border);">/</span>
+      <a href="../blog.html">Blog</a>
+      <span style="color:var(--border);">/</span>
+      <span>Dictation Mode</span>
+    </div>
+    <h1>Dictation Mode — <span class="grad">Learning Languages with Voice</span></h1>
+    <div class="post-meta">
+      <span class="pill pill--feature">Feature</span>
+      <span class="pill pill--meta">26 Feb 2026</span>
+      <span class="pill pill--meta">4 min read</span>
+    </div>
+  </div>
+</div>
+
+<article class="post-body">
+  <div class="container">
+
+    <p>Text-based language learning has a blind spot: you never hear the words. You can memorize vocabulary all day, but when someone actually <em>speaks</em> English to you, it's a different skill entirely.</p>
+
+    <p>Today I'm adding voice messages to Nelly, ClawTutor's English tutor. She can now speak sentences aloud and have kids write down what they hear — real dictation, real listening comprehension.</p>
+
+    <h2>How It Works</h2>
+
+    <p>The child sends <code>/dictation</code> and Nelly responds with a voice message. No text, just audio. The child listens, types what they heard, and Nelly corrects their spelling, punctuation, and grammar.</p>
+
+    <div class="chat-example">
+      <div class="chat-msg child">
+        <div class="chat-sender child">Lena</div>
+        /dictation
+      </div>
+      <div class="chat-msg tutor">
+        <div class="chat-sender tutor">Nelly 🇬🇧</div>
+        <span class="chat-voice">Voice message (0:03)</span>
+        <div style="font-size:.8rem;color:var(--muted);margin-top:.3rem;">(Says: "The children are playing in the garden.")</div>
+      </div>
+      <div class="chat-msg child">
+        <div class="chat-sender child">Lena</div>
+        The children are playing in the gardn.
+      </div>
+      <div class="chat-msg tutor">
+        <div class="chat-sender tutor">Nelly 🇬🇧</div>
+        Almost perfect! 🌟<br><br>
+        ✗ "gardn" → "garden" (missing 'e')<br><br>
+        Everything else is spot on — nice work with "children", that's a tricky one! Ready for the next sentence?
+      </div>
+    </div>
+
+    <h2>Why This Matters</h2>
+
+    <p>Traditional vocabulary apps show you a word and ask you to translate it. That's useful, but it only trains one skill: visual recognition.</p>
+
+    <p>Real language competence requires:</p>
+    <ul>
+      <li><strong>Listening comprehension</strong> — understanding spoken words</li>
+      <li><strong>Spelling from sound</strong> — knowing that "garden" isn't "gardn"</li>
+      <li><strong>Punctuation awareness</strong> — hearing where sentences end</li>
+      <li><strong>Speed</strong> — processing language in real-time</li>
+    </ul>
+
+    <p>Dictation trains all of these at once. It's one of the oldest teaching methods, and it works.</p>
+
+    <h2>Vocabulary Mode</h2>
+
+    <p>Beyond full sentences, Nelly can also do vocabulary drills with pronunciation:</p>
+
+    <div class="chat-example">
+      <div class="chat-msg child">
+        <div class="chat-sender child">Max</div>
+        /vocab animals
+      </div>
+      <div class="chat-msg tutor">
+        <div class="chat-sender tutor">Nelly 🇬🇧</div>
+        Alright, 5 animal words! Listen and translate:<br><br>
+        <span class="chat-voice">Voice message (0:02)</span>
+        <div style="font-size:.8rem;color:var(--muted);margin-top:.3rem;">(Says: "butterfly")</div>
+      </div>
+      <div class="chat-msg child">
+        <div class="chat-sender child">Max</div>
+        Schmetterling
+      </div>
+      <div class="chat-msg tutor">
+        <div class="chat-sender tutor">Nelly 🇬🇧</div>
+        ✅ Correct! 1/5<br><br>
+        <span class="chat-voice">Voice message (0:02)</span>
+        <div style="font-size:.8rem;color:var(--muted);margin-top:.3rem;">(Says: "squirrel")</div>
+      </div>
+    </div>
+
+    <p>Hearing the word spoken helps with pronunciation and makes the vocabulary stick better. When you've <em>heard</em> "squirrel" pronounced correctly, you're more likely to remember it.</p>
+
+    <h2>Adaptive Difficulty</h2>
+
+    <p>The tutor adjusts to each child's level:</p>
+
+    <ul>
+      <li><strong>Grade 5 (Max):</strong> Short sentences, common words, slower speech</li>
+      <li><strong>Grade 7 (Lena):</strong> Longer sentences, complex grammar, natural speed</li>
+    </ul>
+
+    <p>Sentences are pulled from the curriculum when possible, so dictation practice reinforces what they're learning in school.</p>
+
+    <div class="callout">
+      <div class="callout-title">💡 No Cheating Possible</div>
+      <p>Unlike text-based exercises where kids might copy-paste or use translation tools, dictation requires actual listening. The voice message plays once (well, they can replay it, but that's fine for learning). There's no text to copy.</p>
+    </div>
+
+    <h2>Screen Time Rewards</h2>
+
+    <p>Dictation integrates with the screen time system:</p>
+
+    <ul>
+      <li>Each correct sentence: <strong>+3 to +5 minutes</strong></li>
+      <li>Perfect round (5/5): <strong>+10 minute bonus</strong></li>
+    </ul>
+
+    <p>This makes dictation practice feel rewarding rather than like a chore. And since it's genuinely harder than multiple-choice questions, the rewards are slightly higher.</p>
+
+    <h2>Technical Implementation</h2>
+
+    <p>Under the hood, Nelly uses text-to-speech to generate audio, then sends it as a WhatsApp voice message. The child's response is compared against the original text, with fuzzy matching for minor typos vs. actual spelling errors.</p>
+
+    <pre><code># Commands available
+/dictation    — Start a dictation exercise
+/vocab [topic] — Vocabulary with pronunciation</code></pre>
+
+    <p>The full documentation is in the <a href="https://github.com/groonvandorp/ClawTutor/tree/main/addons/voice-announcements" target="_blank">voice-announcements addon</a>.</p>
+
+    <h2>What's Next</h2>
+
+    <p>This opens up more possibilities:</p>
+    <ul>
+      <li><strong>Listening comprehension</strong> — Nelly reads a short story, then asks questions about it</li>
+      <li><strong>Pronunciation practice</strong> — Child sends voice message back, Nelly evaluates (requires speech-to-text)</li>
+      <li><strong>Dialogue practice</strong> — Back-and-forth conversation with voice</li>
+    </ul>
+
+    <p>For now, dictation and vocabulary are live. The kids can start practicing today.</p>
+
+    <a href="../blog.html" class="back-link">← Back to Blog</a>
+
+  </div>
+</article>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-links">
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank">GitHub</a>
+      <a href="https://github.com/groonvandorp/ClawTutor/blob/main/LICENSE" target="_blank">License</a>
+    </div>
+    <a href="https://github.com/groonvandorp/ClawTutor" target="_blank" title="GitHub" style="opacity:.5;transition:opacity .15s;display:flex;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">
+      <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.333-1.754-1.333-1.754-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.806 1.304 3.49.997.108-.776.42-1.305.763-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.468-2.38 1.235-3.22-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.3 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.29-1.552 3.296-1.23 3.296-1.23.653 1.652.242 2.873.118 3.176.77.84 1.233 1.91 1.233 3.22 0 4.61-2.805 5.625-5.475 5.92.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z"/></svg>
+    </a>
+  </div>
+  <div class="footer-bottom">
+    <p><img src="../assets/icon.png" alt="" style="height:22px;width:22px;vertical-align:middle;border-radius:5px;margin-right:.4rem;" />ClawTutor — made with ❤️ by <a href="https://github.com/groonvandorp" target="_blank">Oliver Gruhn-van Dorp</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
