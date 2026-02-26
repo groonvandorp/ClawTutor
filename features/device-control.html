@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Device Control — ClawTutor</title>
+  <meta name="description" content="DNS-based device blocking with Pi-hole. Control TVs, gaming consoles, and phones by MAC address. Auto-unlock when screen time is spent." />
+  <link rel="icon" type="image/png" href="../icon.png" />
+  <link rel="apple-touch-icon" href="../icon.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0b0d12; --surface: #13161e; --surface2: #1b1f2a; --border: #252938;
+      --accent: #ff5b35; --accent2: #ffb03a; --green: #3ddc84; --red: #ff4757;
+      --text: #eef0f6; --muted: #7a7f94; --radius: 14px;
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.7; }
+    a { color: var(--accent); text-decoration: none; } a:hover { text-decoration: underline; }
+    .container { max-width: 800px; margin: 0 auto; padding: 0 1.5rem; }
+    .grad { background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,13,18,.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: .9rem 0; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    .nav-logo { display: flex; align-items: center; gap: .5rem; font-size: 1.1rem; font-weight: 800; color: var(--text); }
+    .nav-links { display: flex; align-items: center; gap: 1.75rem; }
+    .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 500; }
+    .hero { padding: 4rem 0 3rem; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .breadcrumb { font-size: .85rem; color: var(--muted); margin-bottom: 1rem; } .breadcrumb a { color: var(--muted); }
+    h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; line-height: 1.15; }
+    .lead { font-size: 1.15rem; color: var(--muted); margin-top: 1rem; max-width: 600px; }
+    .content { padding: 3rem 0 5rem; }
+    h2 { font-size: 1.5rem; font-weight: 700; margin: 2.5rem 0 1rem; }
+    p { margin-bottom: 1.25rem; }
+    ul { padding-left: 1.5rem; margin-bottom: 1.25rem; } li { margin-bottom: .4rem; }
+    code { font-family: monospace; font-size: .9em; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: .15rem .4rem; }
+    pre { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; overflow-x: auto; font-family: monospace; font-size: .9rem; margin: 1.5rem 0; }
+    .device-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin: 2rem 0; }
+    .device-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; text-align: center; }
+    .device-card .icon { font-size: 2rem; margin-bottom: .5rem; }
+    .device-card .name { font-weight: 700; font-size: .9rem; }
+    .device-card .status { font-size: .8rem; margin-top: .25rem; padding: .2rem .5rem; border-radius: 4px; display: inline-block; }
+    .status--blocked { background: rgba(255,71,87,.15); color: var(--red); }
+    .status--allowed { background: rgba(61,220,132,.15); color: var(--green); }
+    .flow-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin: 2rem 0; }
+    .flow-box h3 { margin: 0 0 1rem; font-size: 1.1rem; }
+    .flow-steps { display: flex; flex-direction: column; gap: .75rem; }
+    .flow-step { display: flex; align-items: center; gap: 1rem; font-size: .95rem; }
+    .flow-step .num { width: 28px; height: 28px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .85rem; flex-shrink: 0; }
+    .back-link { display: inline-flex; align-items: center; gap: .4rem; font-size: .9rem; font-weight: 600; color: var(--muted); margin-top: 2rem; }
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 2rem 0; text-align: center; }
+    footer p { color: var(--muted); font-size: .85rem; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo"><img src="../icon.png" alt="" style="height:32px;width:32px;border-radius:7px;" /><span>ClawTutor</span></a>
+    <div class="nav-links">
+      <a href="../index.html#features">Features</a>
+      <a href="../blog.html">Blog</a>
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="container">
+    <div class="breadcrumb"><a href="../index.html">ClawTutor</a> / <a href="../index.html#features">Features</a> / Device Control</div>
+    <h1>Device <span class="grad">Control</span></h1>
+    <p class="lead">DNS-based blocking with Pi-hole. No app installs needed. Works on any device — TVs, consoles, phones, tablets.</p>
+  </div>
+</div>
+
+<div class="content">
+  <div class="container">
+
+    <h2>How It Works</h2>
+    <p>Pi-hole runs on the same Raspberry Pi as ClawTutor. Devices are registered by MAC address. When blocked, DNS resolution fails and the device can't connect to anything.</p>
+
+    <div class="device-grid">
+      <div class="device-card">
+        <div class="icon">📺</div>
+        <div class="name">Apple TV Beamer</div>
+        <span class="status status--blocked">🚫 Blocked</span>
+      </div>
+      <div class="device-card">
+        <div class="icon">🎮</div>
+        <div class="name">PlayStation 5</div>
+        <span class="status status--blocked">🚫 Blocked</span>
+      </div>
+      <div class="device-card">
+        <div class="icon">📱</div>
+        <div class="name">Max's iPad</div>
+        <span class="status status--allowed">✅ Allowed</span>
+      </div>
+      <div class="device-card">
+        <div class="icon">💻</div>
+        <div class="name">Nintendo Switch</div>
+        <span class="status status--blocked">🚫 Blocked</span>
+      </div>
+    </div>
+
+    <h2>Parent Commands</h2>
+    <p>Control devices directly via WhatsApp:</p>
+
+    <pre>tv wohnzimmer an          → Unlock living room TV
+tv aus                    → Block all TVs
+beamer 30 min max      → Unlock beamer, deduct from Max's balance
+tv status                 → Show current state of all devices</pre>
+
+    <div class="flow-box">
+      <h3>Auto-Off Flow</h3>
+      <div class="flow-steps">
+        <div class="flow-step"><span class="num">1</span> Max requests 30 min Beamer</div>
+        <div class="flow-step"><span class="num">2</span> System checks balance (45 min available)</div>
+        <div class="flow-step"><span class="num">3</span> Beamer unlocked, 30 min deducted</div>
+        <div class="flow-step"><span class="num">4</span> Cron job monitors time</div>
+        <div class="flow-step"><span class="num">5</span> After 30 min → auto-block</div>
+      </div>
+    </div>
+
+    <h2>Setup</h2>
+    <ul>
+      <li>Devices must use Pi-hole as DNS (set in router or per-device)</li>
+      <li>Register devices by MAC in <code>device-control.sh</code></li>
+      <li>Script uses Pi-hole FTL API to block/unblock</li>
+      <li>Cron runs every 2 minutes to check for expired sessions</li>
+    </ul>
+
+    <h2>Why DNS?</h2>
+    <p>DNS blocking is <strong>unbypassable</strong> for most devices:</p>
+    <ul>
+      <li>Works on any device without installing anything</li>
+      <li>Apple TV, PlayStation, Switch — all blocked equally</li>
+      <li>Kids can't disable it (unless they reconfigure network settings)</li>
+      <li>Instant on/off — no app sync delays</li>
+    </ul>
+
+    <p>For local-only games (offline Switch, downloaded content), a smart plug add-on can cut power to the TV entirely.</p>
+
+    <a href="../index.html#features" class="back-link">← Back to Features</a>
+
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p><img src="../icon.png" alt="" style="height:22px;width:22px;vertical-align:middle;border-radius:5px;margin-right:.4rem;" />ClawTutor — <a href="https://github.com/groonvandorp/ClawTutor">GitHub</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

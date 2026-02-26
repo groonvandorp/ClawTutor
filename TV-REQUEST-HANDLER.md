@@ -33,7 +33,7 @@ Format: `TV_REQUEST: <kind> möchte <tv> für <minuten> Minuten`
 ### Vorgehen:
 
 1. **Parse die Anfrage:**
-   - Kind: olivia / arthur
+   - Kind: lena / max
    - TV: beamer / lcd / wohnzimmer
    - Minuten: Zahl
 
@@ -48,11 +48,11 @@ Format: `TV_REQUEST: <kind> möchte <tv> für <minuten> Minuten`
 
 ### Beispiel:
 
-**Eingehend:** "TV_REQUEST: arthur möchte beamer für 20 Minuten"
+**Eingehend:** "TV_REQUEST: max möchte beamer für 20 Minuten"
 
 **Ausführen:**
 ```bash
-./addons/device-control/tv-session.sh start arthur beamer 20
+./addons/device-control/tv-session.sh start max beamer 20
 ```
 
 **Antwort bei Erfolg:**

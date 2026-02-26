@@ -99,8 +99,8 @@ ClawTutor/
 │   ├── english-5/              # Camden Town 5
 │   └── english-7/              # Camden Town 7
 ├── kids/                       # Per-kid profile + class assignments
-│   ├── olivia.md               # Grade 7 → math-7, english-7
-│   └── arthur.md               # Grade 5 → math-5, english-5
+│   ├── lena.md               # Grade 7 → math-7, english-7
+│   └── max.md               # Grade 5 → math-5, english-5
 └── templates/                  # Blank templates for new setups
 ```
 

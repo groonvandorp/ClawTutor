@@ -109,7 +109,7 @@ In `/home/jarvis/.openclaw/openclaw.json`:
 
 ```json
 {
-  "child": "olivia",
+  "child": "lena",
   "duration_min": 12.5,
   "notes_played": 234,
   "rhythm_score": 78,

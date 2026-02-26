@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exam Prep Mode — ClawTutor</title>
+  <meta name="description" content="Countdown-based exam preparation. The tutor automatically intensifies practice and focuses on weak areas as the test date approaches." />
+  <link rel="icon" type="image/png" href="../icon.png" />
+  <link rel="apple-touch-icon" href="../icon.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0b0d12; --surface: #13161e; --surface2: #1b1f2a; --border: #252938;
+      --accent: #ff5b35; --accent2: #ffb03a; --green: #3ddc84; --blue: #4fa3e0;
+      --text: #eef0f6; --muted: #7a7f94; --radius: 14px;
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.7; }
+    a { color: var(--accent); text-decoration: none; } a:hover { text-decoration: underline; }
+    .container { max-width: 800px; margin: 0 auto; padding: 0 1.5rem; }
+    .grad { background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(11,13,18,.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: .9rem 0; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    .nav-logo { display: flex; align-items: center; gap: .5rem; font-size: 1.1rem; font-weight: 800; color: var(--text); } .nav-logo:hover { text-decoration: none; }
+    .nav-links { display: flex; align-items: center; gap: 1.75rem; }
+    .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 500; }
+    .hero { padding: 4rem 0 3rem; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .breadcrumb { font-size: .85rem; color: var(--muted); margin-bottom: 1rem; } .breadcrumb a { color: var(--muted); }
+    h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; line-height: 1.15; letter-spacing: -.03em; }
+    .lead { font-size: 1.15rem; color: var(--muted); margin-top: 1rem; max-width: 600px; }
+    .content { padding: 3rem 0 5rem; }
+    h2 { font-size: 1.5rem; font-weight: 700; margin: 2.5rem 0 1rem; }
+    p { margin-bottom: 1.25rem; }
+    ul { padding-left: 1.5rem; margin-bottom: 1.25rem; } li { margin-bottom: .4rem; }
+    code { font-family: monospace; font-size: .9em; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: .15rem .4rem; }
+    .timeline { margin: 2rem 0; }
+    .timeline-item { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; }
+    .timeline-marker { width: 50px; flex-shrink: 0; text-align: right; font-weight: 800; color: var(--accent); }
+    .timeline-content { border-left: 2px solid var(--border); padding-left: 1.5rem; padding-bottom: .5rem; }
+    .timeline-content h3 { font-size: 1.1rem; margin-bottom: .5rem; }
+    .timeline-content p { color: var(--muted); margin: 0; font-size: .95rem; }
+    .example-box { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin: 2rem 0; font-family: monospace; font-size: .9rem; white-space: pre-wrap; }
+    .back-link { display: inline-flex; align-items: center; gap: .4rem; font-size: .9rem; font-weight: 600; color: var(--muted); margin-top: 2rem; }
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 2rem 0; text-align: center; }
+    footer p { color: var(--muted); font-size: .85rem; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo"><img src="../icon.png" alt="" style="height:32px;width:32px;border-radius:7px;" /><span>ClawTutor</span></a>
+    <div class="nav-links">
+      <a href="../index.html#features">Features</a>
+      <a href="../courses.html">Courses</a>
+      <a href="../blog.html">Blog</a>
+      <a href="https://github.com/groonvandorp/ClawTutor" target="_blank">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="container">
+    <div class="breadcrumb"><a href="../index.html">ClawTutor</a> / <a href="../index.html#features">Features</a> / Exam Prep</div>
+    <h1>Exam Prep <span class="grad">Mode</span></h1>
+    <p class="lead">Add an exam date and the tutor shifts gears. Countdown-based intensification with automatic weak-spot targeting.</p>
+  </div>
+</div>
+
+<div class="content">
+  <div class="container">
+
+    <h2>How It Works</h2>
+    <p>Register upcoming exams in <code>CALENDAR.md</code>. The tutor reads this file every session and automatically adjusts its approach based on how many days remain.</p>
+
+    <div class="example-box">| Date       | Subject | Topic           | Status        |
+|------------|---------|-----------------|---------------|
+| 20.03.2026 | Math    | Fractions       | 🟡 14 days    |
+| 05.04.2026 | English | Present Perfect | ⬜ 30 days    |</div>
+
+    <h2>The Countdown</h2>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-marker">14 days</div>
+        <div class="timeline-content">
+          <h3>Coverage Phase</h3>
+          <p>All subtopics get reviewed. The tutor makes sure nothing is missed.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-marker">7 days</div>
+        <div class="timeline-content">
+          <h3>Weak Spot Focus</h3>
+          <p>PROGRESS.md shows which topics are below 60%. Those get extra attention.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-marker">3 days</div>
+        <div class="timeline-content">
+          <h3>Mixed Practice</h3>
+          <p>Questions mirror the real test format — mixed topics, varied difficulty.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-marker">1 day</div>
+        <div class="timeline-content">
+          <h3>Mini Mock Exam</h3>
+          <p>A practice test covering the full scope. Results reviewed together.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-marker">Test day</div>
+        <div class="timeline-content">
+          <h3>Motivation Only</h3>
+          <p>"Du schaffst das! 💪" — No quiz, no pressure. Just encouragement.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2>Exam Detail Files</h2>
+    <p>For each exam, create a detail file in <code>exams/</code> with the exact scope:</p>
+
+    <div class="example-box"># Math Exam — 20.03.2026
+
+## Topics Covered
+- Adding fractions with same denominator
+- Adding fractions with different denominators
+- Multiplying fractions
+- Word problems with fractions
+
+## From the Teacher
+"Focus on real-world applications. 
+ Calculator NOT allowed."</div>
+
+    <p>The tutor reads this file and tailors its questions to match exactly what will be tested.</p>
+
+    <h2>Automatic Integration</h2>
+    <ul>
+      <li><strong>PROGRESS.md</strong> — Shows current mastery per topic</li>
+      <li><strong>CURRICULUM.md</strong> — Maps topics to textbook chapters</li>
+      <li><strong>CALENDAR.md</strong> — Tracks exam dates and countdown</li>
+      <li><strong>exams/*.md</strong> — Detailed scope per test</li>
+    </ul>
+
+    <p>When these files exist, exam prep is automatic. No extra configuration needed.</p>
+
+    <a href="../index.html#features" class="back-link">← Back to Features</a>
+
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p><img src="../icon.png" alt="" style="height:22px;width:22px;vertical-align:middle;border-radius:5px;margin-right:.4rem;" />ClawTutor — <a href="https://github.com/groonvandorp/ClawTutor">GitHub</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

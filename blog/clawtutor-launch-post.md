@@ -35,7 +35,7 @@ The result is **ClawTutor** — an AI tutoring system running on a Raspberry Pi 
 ```
 WhatsApp ←→ OpenClaw Gateway ←→ Claude API
                 ↓
-         Agent: "tutor-arthur"
+         Agent: "tutor-max"
                 ↓
          Workspace Files:
          - SOUL.md (personality)
@@ -60,7 +60,7 @@ My kids don't talk to "ClawTutor." They talk to **Matteo** (math), **Nelly** (En
 
 Switching is simple:
 ```
-Arthur: /mathe
+Max: /mathe
 Matteo: Hey! Matteo hier 🧮 Was rechnen wir?
 ```
 
@@ -115,13 +115,13 @@ The economy:
 This is tracked in a SQLite database with a native OpenClaw plugin. The tutors can query balances and add time:
 
 ```javascript
-screentime_add(kind: "arthur", minutes: 40, reason: "Quiz 3/3 + Bonus")
+screentime_add(kind: "max", minutes: 40, reason: "Quiz 3/3 + Bonus")
 ```
 
 But here's the kicker: the tutors can't *spend* the time. Only I (or my wife, via a separate "parents" agent) can unlock the TV:
 
 ```
-Parent: tv wohnzimmer 30 min arthur
+Parent: tv wohnzimmer 30 min max
 System: ✅ Wohnzimmer unlocked for 30 minutes. Auto-off at 18:45.
 ```
 
@@ -170,7 +170,7 @@ ClawTutor handles the daily practice grind. It frees up my time for the moments 
 ## What's Next
 
 - **MIDI integration for Melody** — The Korg can send note data; imagine real-time feedback on piano practice
-- **Voice output via Bluetooth speaker** — Announcements like "Arthur, time for your quiz!"
+- **Voice output via Bluetooth speaker** — Announcements like "Max, time for your quiz!"
 - **iOS app** — Currently in testing, native chat interface instead of WhatsApp
 - **Adaptive difficulty** — Automatically adjust based on performance trends
 

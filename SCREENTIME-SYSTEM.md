@@ -13,8 +13,8 @@ Nach einem Quiz mit richtigen Antworten:
 python3 scripts/screentime-db.py add <kind> <minuten> "<grund>"
 
 # Beispiele:
-python3 scripts/screentime-db.py add olivia 30 "Quiz 12.02: 3/3 richtig"
-python3 scripts/screentime-db.py add arthur 20 "Quiz 12.02: 2/3 richtig"
+python3 scripts/screentime-db.py add lena 30 "Quiz 12.02: 3/3 richtig"
+python3 scripts/screentime-db.py add max 20 "Quiz 12.02: 2/3 richtig"
 ```
 
 ## Für Kinder: TV freischalten
@@ -30,10 +30,10 @@ Der Tutor/Agent prüft das Guthaben und schaltet ggf. frei.
 
 ```bash
 # Guthaben prüfen
-python3 scripts/screentime-db.py balance olivia
+python3 scripts/screentime-db.py balance lena
 
 # TV-Session starten (prüft Guthaben, zieht ab, schaltet TV frei)
-./addons/device-control/tv-session.sh start olivia beamer 30
+./addons/device-control/tv-session.sh start lena beamer 30
 
 # Session manuell beenden
 ./addons/device-control/tv-session.sh end <session_id>

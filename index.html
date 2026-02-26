@@ -254,6 +254,10 @@
       transition: border-color .2s, transform .2s;
     }
     .feature-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .feature-card--link { text-decoration: none; color: inherit; cursor: pointer; display: block; }
+    .feature-card--link:hover { text-decoration: none; }
+    .feature-more { display: block; margin-top: .75rem; font-size: .8rem; font-weight: 600; color: var(--accent); opacity: 0; transition: opacity .2s; }
+    .feature-card--link:hover .feature-more { opacity: 1; }
     .feature-icon { font-size: 1.75rem; margin-bottom: .75rem; }
     .feature-card h3 { margin-bottom: .4rem; }
     .feature-card p { color: var(--muted); font-size: .88rem; }
@@ -588,20 +592,46 @@
       <h2>Everything you need. Nothing you don't.</h2>
     </div>
     <div class="features-grid">
-      <div class="feature-card">
+      <a href="features/tutors.html" class="feature-card feature-card--link">
         <div class="feature-icon">🎓</div>
         <h3>Personalized AI Tutors</h3>
         <p>Distinct personalities per subject — patient, age-appropriate, and jailbreak-resistant.</p>
-      </div>
+        <span class="feature-more">Learn more →</span>
+      </a>
+      <a href="learning-types.html" class="feature-card feature-card--link">
+        <div class="feature-icon">🧠</div>
+        <h3>Adaptive Learning Types</h3>
+        <p>VARK-based detection adapts teaching style — visual, auditory, read/write, or kinesthetic.</p>
+        <span class="feature-more">Learn more →</span>
+      </a>
+      <a href="features/exam-prep.html" class="feature-card feature-card--link">
+        <div class="feature-icon">📅</div>
+        <h3>Exam Prep Mode</h3>
+        <p>Add exam dates and the tutor shifts to countdown mode — intensified practice, focused on weak areas.</p>
+        <span class="feature-more">Learn more →</span>
+      </a>
+      <a href="features/screen-time.html" class="feature-card feature-card--link">
+        <div class="feature-icon">📺</div>
+        <h3>Screen Time Economy</h3>
+        <p>Correct answers earn minutes. Streaks unlock bonuses. Screen time becomes motivation, not conflict.</p>
+        <span class="feature-more">Learn more →</span>
+      </a>
+      <a href="features/device-control.html" class="feature-card feature-card--link">
+        <div class="feature-icon">🔒</div>
+        <h3>Device Control</h3>
+        <p>Pi-hole blocks TVs, PlayStations, phones by MAC address. Auto-unlocks when credits are spent.</p>
+        <span class="feature-more">Learn more →</span>
+      </a>
+      <a href="features/security.html" class="feature-card feature-card--link">
+        <div class="feature-icon">🛡️</div>
+        <h3>Jailbreak Proof</h3>
+        <p>Kids WILL try to trick the AI. The SOUL.md prompt injection defence keeps the tutor on-task.</p>
+        <span class="feature-more">Learn more →</span>
+      </a>
       <div class="feature-card">
         <div class="feature-icon">📚</div>
         <h3>Curriculum-Aware</h3>
         <p>Upload the textbook table of contents. The tutor knows the chapter, weak spots, and upcoming exams.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📅</div>
-        <h3>Exam Prep Mode</h3>
-        <p>Add exam dates and the tutor shifts to countdown mode — intensified practice, focused on weak areas.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">👨‍👩‍👧‍👦</div>
@@ -609,34 +639,14 @@
         <p>Each kid gets their own isolated tutor agent and workspace. No shared context.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">🛡️</div>
-        <h3>Jailbreak Proof</h3>
-        <p>Kids WILL try to trick the AI. The SOUL.md prompt injection defence keeps the tutor on-task.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🔒</div>
-        <h3>Device Control</h3>
-        <p>Optional Pi-hole add-on blocks TVs, PlayStations, phones, and laptops by MAC address. Auto-unlocks when credits are spent.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🌍</div>
-        <h3>Multilingual</h3>
-        <p>Full German and English templates included. Add any language by translating the workspace files.</p>
-      </div>
-      <div class="feature-card">
         <div class="feature-icon">📊</div>
         <h3>Progress Tracking</h3>
         <p>Automatic per-topic scoring with visual status: ⬜ → 🟡 → 🟢 → ⭐</p>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">🔥</div>
-        <h3>Streak System</h3>
-        <p>Consecutive days of practice unlock weekend bonus minutes. Streaks make it addictive (in a good way).</p>
-      </div>
       <div class="feature-card" style="border-style:dashed;opacity:.8;">
         <div class="feature-icon">🧹</div>
         <h3>Chore Credits <span style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--accent2);vertical-align:middle;">Soon</span></h3>
-        <p>Earn screen time by emptying the dishwasher, brushing teeth, or cleaning your room. Parent confirms via WhatsApp — credits added instantly.</p>
+        <p>Earn screen time by emptying the dishwasher, brushing teeth, or cleaning your room. Parent confirms via WhatsApp.</p>
       </div>
     </div>
   </div>
